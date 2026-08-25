@@ -2,3 +2,16 @@
 .env
 .env.*
 !.env.example
+!.env.*.example
+
+# Node / Next.js
+app/web/node_modules/
+app/web/.next/
+app/web/out/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Tooling
+.DS_Store

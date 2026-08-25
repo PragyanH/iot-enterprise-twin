@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #4ecdc4;
+  --color-secondary: #2b6cff;
+  --color-accent: #f4d35e;
+  --color-success: #35d399;
+  --color-danger: #ff5f7a;
+  --color-panel: #111827;
+  --color-surface: #0f172a;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased;
+  background-image:
+    radial-gradient(circle at top, rgba(78, 205, 196, 0.14), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(43, 108, 255, 0.14), transparent 25%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.dashboard-shell {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(17, 24, 39, 0.96));
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.metric-card {
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.status-dot {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 9999px;
+}

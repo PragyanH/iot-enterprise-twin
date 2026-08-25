@@ -1,0 +1,36 @@
+services:
+  api:
+    build:
+      context: ./services/backend/api
+      dockerfile: Dockerfile
+    container_name: aegis-api
+    environment:
+      PYTHONUNBUFFERED: "1"
+      AEGIS_AUTH_DB_PATH: /app/data/aegis_auth.db
+      BACKEND_URL: http://api:8000
+    volumes:
+      - ./services/backend/api:/app
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./model-store:/app/model-store
+    ports:
+      - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  web:
+    build:
+      context: ./app/web
+      dockerfile: Dockerfile
+    container_name: aegis-web
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      BACKEND_URL: http://api:8000
+    depends_on:
+      - api
+    volumes:
+      - ./app/web:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    command: npm run dev
