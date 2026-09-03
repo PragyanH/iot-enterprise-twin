@@ -7,6 +7,10 @@ services:
     environment:
       PYTHONUNBUFFERED: "1"
       AEGIS_AUTH_DB_PATH: /app/data/aegis_auth.db
+      AEGIS_MODEL_PACKAGE_PATH: /app/model-store/aegis-hybrid-trust/v1
+      AEGIS_ATTACK_CONTROLLER_URL: ${AEGIS_ATTACK_CONTROLLER_URL:-}
+      AEGIS_ATTACK_CONTROLLER_TOKEN: ${AEGIS_ATTACK_CONTROLLER_TOKEN:-}
+      AEGIS_ALLOWED_ATTACK_JOB_IDS: ${AEGIS_ALLOWED_ATTACK_JOB_IDS:-pi-syn-demo}
       BACKEND_URL: http://api:8000
     volumes:
       - ./services/backend/api:/app

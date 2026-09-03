@@ -1,0 +1,46 @@
+{
+  "model_name": "Aegis Hybrid Temporal Trust Engine",
+  "version": "v1",
+  "sequence_length": 20,
+  "sample_interval_seconds": 1,
+  "architecture": {
+    "vae": "LSTM-VAE",
+    "hidden_size": 64,
+    "latent_size": 16,
+    "attention": "learned temporal attention pooling",
+    "classifier": "XGBoost with calibrated fallback",
+    "drift": "per-feature Jensen-Shannon divergence"
+  },
+  "fusion": {
+    "pi": {
+      "rule": 0.5,
+      "xgboost": 0.3,
+      "vae": 0.15,
+      "jsd": 0.05
+    },
+    "mock": {
+      "baseline": 0.45,
+      "vae": 0.35,
+      "jsd": 0.2
+    }
+  },
+  "states": ["BOOTSTRAP", "HEALTHY", "SUSPICIOUS", "ATTACK", "RECOVERING", "STALE"],
+  "artifacts": {
+    "baselines": "baselines.json",
+    "vae_pi": "temporal_vae_pi.pt",
+    "vae_mock": "temporal_vae_mock.pt",
+    "xgboost": "xgboost.json",
+    "training_metrics": "metrics.json",
+    "canonicalization": "canonicalization.json",
+    "intelligence": "intelligence.json",
+    "mitre_scenarios": "../../../rules/mitre_scenarios.yaml",
+    "rules": "../../../rules/aegis_rules.yaml"
+  },
+  "policy": {
+    "ruleset_version": "aegis-rules-v1",
+    "canonicalization_version": "aegis-canonicalization-v1",
+    "intelligence_version": "aegis-intelligence-v1",
+    "mitre_scenarios_version": "aegis-mitre-scenarios-v1"
+  },
+  "notes": "The deterministic calibrated fallback remains active when optional learned checkpoints have not yet been trained."
+}

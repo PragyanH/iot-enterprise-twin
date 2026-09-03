@@ -12,6 +12,8 @@ app/web/out/
 # Python caches
 __pycache__/
 *.pyc
+data/aegis_incidents*.db
+reports/incidents*/
 
 # Tooling
 .DS_Store

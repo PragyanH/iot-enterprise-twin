@@ -22,6 +22,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const controller = new AbortController();
+    let eventSource: EventSource | null = null;
 
     async function fetchFleet() {
       try {
@@ -36,6 +37,12 @@ export default function HomePage() {
 
         const data = (await response.json()) as FleetDevice[];
         setFleet(data);
+
+        eventSource = new EventSource("/api/v1/events/trust");
+        eventSource.addEventListener("trust", (event) => {
+          const payload = JSON.parse((event as MessageEvent<string>).data) as { devices: FleetDevice[] };
+          setFleet(payload.devices);
+        });
       } catch (error) {
         if ((error as Error).name !== "AbortError") {
           setFleet([]);
@@ -46,7 +53,10 @@ export default function HomePage() {
     }
 
     fetchFleet();
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      eventSource?.close();
+    };
   }, []);
 
   const totals = useMemo(() => {

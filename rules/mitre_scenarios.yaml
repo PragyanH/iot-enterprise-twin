@@ -1,0 +1,66 @@
+version: aegis-mitre-scenarios-v1
+scenarios:
+  - technique_id: T1498.001
+    technique_name: Direct Network Flood
+    tactic: Impact
+    demo_mode: live_hardware
+    description: Controlled SYN flood against the isolated Raspberry Pi.
+    primary_indicators: [syn_rate, incomplete_ratio, handshake_completion_ratio]
+    detection_mechanism: deterministic_rule_plus_classifier
+    recommended_response: Stop the registered VM attack job and verify clean handshakes.
+  - technique_id: T1046
+    technique_name: Network Service Discovery
+    tactic: Discovery
+    demo_mode: recorded_replay_optional_live
+    description: Multi-port probing with rejected connections.
+    primary_indicators: [unique_destination_ports, rejected_connections]
+    detection_mechanism: deterministic_rule_plus_classifier
+    recommended_response: Isolate the scanner and review exposed services.
+  - technique_id: T1110.001
+    technique_name: Password Guessing
+    tactic: Credential Access
+    demo_mode: recorded_replay_optional_live
+    description: Repeated failed SSH authentication attempts.
+    primary_indicators: [ssh_attempts, ssh_failures]
+    detection_mechanism: deterministic_rule_plus_classifier
+    recommended_response: Block the source and rotate affected credentials.
+  - technique_id: T1499.004
+    technique_name: Application or System Exploitation
+    tactic: Impact
+    demo_mode: simulation_poc
+    description: Behavioral resource stress represented by timing and flow drift.
+    primary_indicators: [iat, flow_symmetry, orig_packets, resp_packets]
+    detection_mechanism: unknown_behavioral_anomaly
+    recommended_response: Rate-limit traffic and inspect the affected service.
+  - technique_id: T1040
+    technique_name: Network Sniffing
+    tactic: Credential Access
+    demo_mode: simulation_poc
+    description: Simulated unusual passive traffic profile.
+    primary_indicators: [packet_size, flow_symmetry, iat]
+    detection_mechanism: unknown_behavioral_anomaly
+    recommended_response: Validate interface ownership and segment the endpoint.
+  - technique_id: T1071.001
+    technique_name: Web Protocols
+    tactic: Command and Control
+    demo_mode: simulation_poc
+    description: Simulated abnormal web-like beacon timing.
+    primary_indicators: [iat, packet_size, flow_symmetry]
+    detection_mechanism: unknown_behavioral_anomaly
+    recommended_response: Restrict egress and inspect application destinations.
+  - technique_id: T1021.004
+    technique_name: SSH
+    tactic: Lateral Movement
+    demo_mode: simulation_poc
+    description: Simulated unusual SSH-shaped lateral movement without password guessing.
+    primary_indicators: [iat, orig_packets, resp_packets, flow_symmetry]
+    detection_mechanism: unknown_behavioral_anomaly
+    recommended_response: Segment the host and validate authorized SSH sessions.
+  - technique_id: T1095
+    technique_name: Non-Application Layer Protocol
+    tactic: Command and Control
+    demo_mode: simulation_poc
+    description: Simulated opaque flow with abnormal size and symmetry.
+    primary_indicators: [packet_size, flow_symmetry, iat]
+    detection_mechanism: unknown_behavioral_anomaly
+    recommended_response: Quarantine the flow and capture packets for analysis.

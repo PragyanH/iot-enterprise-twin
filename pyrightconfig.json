@@ -6,9 +6,9 @@
     "reportMissingImports": "none",
     "reportMissingModuleSource": "none",
     "include": [
-        "engine.py",
-        "model.py",
-        "check_setup.py"
+        "services/backend/api/app",
+        "services/backend/api/tests",
+        "scripts"
     ],
     "exclude": [
         "venv"

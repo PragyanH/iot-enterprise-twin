@@ -36,8 +36,9 @@ FastAPI backend (localhost:8000)
 │   └── backend/
 │       └── api/                 # FastAPI backend service
 ├── model-store/
-│   └── aegis-lstm-autoencoder/
-│       └── v1/                  # exported model artifacts and checkpoints
+│   ├── aegis-hybrid-trust/
+│   │   └── v1/                  # active hybrid model package and baselines
+│   └── aegis-lstm-autoencoder/  # legacy placeholder retained for reference
 ├── infra/
 │   └── docker/                  # reusable Docker support files
 ├── scripts/
@@ -94,6 +95,19 @@ Then open:
 - Backend docs: http://localhost:8000/docs
 - Backend health: http://localhost:8000/api/v1/health
 
+### Windows Raspberry Pi telemetry
+
+The finals live sensor is Npcap + TShark. After installing Wireshark/Npcap,
+list interfaces and start the Pi-facing capture from the repository root:
+
+```powershell
+python scripts/tshark_live.py --list-interfaces
+python scripts/tshark_live.py --interface 4 --target-ip 192.168.56.20
+```
+
+Use `doc/HARDWARE_DEMO_RUNBOOK.md` for recording, attack-controller and
+physical acceptance steps. Zeek remains an alternate Linux sensor.
+
 ## Docker
 
 From the project root:
@@ -147,27 +161,51 @@ These variables are consumed by Tailwind classes defined in `tailwind.config.ts`
 
 ## Model lifecycle and training
 
-The project uses the Aegis LSTM autoencoder as its digital twin model.
+The active model is the **Aegis Hybrid Temporal Trust Engine**. It combines a
+64-unit LSTM-VAE, temporal attention, a 16-dimensional latent space, XGBoost,
+per-feature Jensen-Shannon divergence, deterministic Zeek rules, and a stable
+trust-state composer.
 
 ### Model location
 
 The model artifacts live under:
 
-- `model-store/aegis-lstm-autoencoder/v1/`
+- `model-store/aegis-hybrid-trust/v1/`
 
 This directory is reserved for release-ready model checkpoints, metadata, and any saved inference weights.
 
-### What `model-store/aegis-lstm-autoencoder` is
+### Runtime trust API
 
-It represents the trained LSTM autoencoder model used to score whether device activity deviates from normal behavior. In other words, it is the model package that encodes the learned baseline for device telemetry.
+The FastAPI backend exposes:
+
+- `POST /api/v1/telemetry/windows`
+- `GET /api/v1/devices/{device_id}/state`
+- `GET /api/v1/events/trust` (server-sent events)
+- `POST /api/v1/devices/{device_id}/remediate`
+- `POST /api/v1/devices/{device_id}/simulate-attack`
+- `POST /api/v1/demo/replay/pi_syn`
+- `GET /api/v1/incidents` and incident detail/timeline/report routes
+- `GET /api/v1/system/capabilities`
+
+Both real Pi telemetry and mock telemetry use the same normalized window API.
+The existing frontend design is unchanged and now receives live fleet trust
+updates through SSE.
+Step 3 persists detection-time forensic snapshots in SQLite, produces idempotent
+HTML reports, exposes structured remediation phases, verifies three consecutive
+clean windows before closure, and applies wall-clock staleness only to observed
+live-hardware telemetry.
 
 ### How to train or replace a model
 
-1. Prepare training data in the expected feature format used by the current app.
-2. Train your LSTM autoencoder in the backend or a dedicated ML job.
-3. Save the trained weights into `model-store/aegis-lstm-autoencoder/v1/`.
-4. Update the loading path in the backend model service so the new checkpoint is referenced.
-5. Restart the backend service.
+1. Capture session-labeled telemetry JSONL or use `--synthetic-demo`.
+2. Run `python scripts/train_hybrid_models.py --input <sessions.jsonl>`.
+3. Confirm that the generated `metrics.json` contains real held-out metrics.
+4. Run `python scripts/run_demo_acceptance.py --loops 20`.
+5. Restart the backend to load the frozen PyTorch and XGBoost artifacts.
+
+When learned artifacts are absent, the backend explicitly reports calibrated
+fallback model backends and retains reliable demo behavior; it never reports
+untrained values as learned accuracy.
 
 The repo is intentionally structured so model weights and metadata are separated from app code and API logic.
 
@@ -247,6 +285,9 @@ curl http://localhost:3000
 ```
 
 ## Notes for contributors
+
+For Raspberry Pi, Zeek, attack-controller, and replay setup, see
+[`doc/HARDWARE_DEMO_RUNBOOK.md`](doc/HARDWARE_DEMO_RUNBOOK.md).
 
 - Keep frontend logic in `app/web` and backend logic in `services/backend/api`.
 - Avoid creating ad hoc root-level scripts and services.

@@ -1,0 +1,68 @@
+ruleset_version: aegis-rules-v1
+rules:
+  - id: AEGIS-SYN-001
+    name: Raspberry Pi SYN Flood
+    attack_type: syn_flood
+    severity: critical
+    mitre:
+      technique_id: T1498.001
+      technique_name: Direct Network Flood
+      tactic: Impact
+    conditions:
+      - feature: syn_rate
+        operator: ">="
+        threshold: 50.0
+      - feature: incomplete_ratio
+        operator: ">="
+        threshold: 0.65
+      - feature: handshake_completion_ratio
+        operator: "<="
+        threshold: 0.45
+    required_conditions: 3
+    response:
+      action: stop_registered_attack_job
+      mode: attack_controller_fallback
+    explanation: Initial SYN traffic is high while handshake failures rise and successful completion collapses.
+    version: "1.0.0"
+  - id: AEGIS-SCAN-001
+    name: Raspberry Pi Port Scan
+    attack_type: port_scan
+    severity: high
+    mitre:
+      technique_id: T1046
+      technique_name: Network Service Discovery
+      tactic: Discovery
+    conditions:
+      - feature: unique_destination_ports
+        operator: ">="
+        threshold: 25.0
+      - feature: rejected_connections
+        operator: ">="
+        threshold: 15.0
+    required_conditions: 2
+    response:
+      action: stop_registered_attack_job
+      mode: attack_controller_fallback
+    explanation: The endpoint receives probes across many destination ports with a high rejected-connection count.
+    version: "1.0.0"
+  - id: AEGIS-SSH-001
+    name: Raspberry Pi SSH Password Guessing
+    attack_type: ssh_bruteforce
+    severity: high
+    mitre:
+      technique_id: T1110.001
+      technique_name: Password Guessing
+      tactic: Credential Access
+    conditions:
+      - feature: ssh_attempts
+        operator: ">="
+        threshold: 10.0
+      - feature: ssh_failures
+        operator: ">="
+        threshold: 8.0
+    required_conditions: 2
+    response:
+      action: stop_registered_attack_job
+      mode: attack_controller_fallback
+    explanation: Repeated SSH connection attempts coincide with repeated observable failures.
+    version: "1.0.0"
