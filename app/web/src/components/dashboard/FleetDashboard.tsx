@@ -9,6 +9,7 @@ import { FleetStats } from "./FleetStats";
 import { AttackLifecycleDemo } from "@/components/aegis/AttackLifecycleDemo";
 import { CompetitiveLandscape } from "@/components/aegis/CompetitiveLandscape";
 import { IndustrialHardware } from "@/components/aegis/IndustrialHardware";
+import { EnterpriseArchitectureMap } from "@/components/aegis/EnterpriseArchitectureMap";
 
 export function FleetDashboard() {
   const { devices, connected, error } = useDevices();
@@ -30,6 +31,7 @@ export function FleetDashboard() {
       <div className="fleet-layout"><BuildingMap devices={devices} /><DeviceList devices={devices} /></div>
       <IndustrialHardware />
       <div className="module-launch-row"><button className="module-launch-button" onClick={() => setOpenModule("xai")}>EXPLAINABLE AI LAB <span>OPEN FULL VIEW →</span></button><button className="module-launch-button" onClick={() => setOpenModule("poc")}>POC MODULE <span>OPEN FULL VIEW →</span></button></div>
+      <EnterpriseArchitectureMap />
     </div>
     {openModule && <div className="module-modal" role="dialog" aria-modal="true" aria-label={openModule === "xai" ? "XAI full view" : "POC full view"} onMouseDown={(event) => { if (event.target === event.currentTarget) setOpenModule(null); }}><div className="module-modal-content"><button className="module-modal-close" onClick={() => setOpenModule(null)} aria-label="Close full view">×</button>{openModule === "xai" ? <AttackLifecycleDemo /> : <CompetitiveLandscape />}</div></div>}
   </main>;

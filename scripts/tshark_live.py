@@ -46,6 +46,47 @@ def log_event(event: str, **fields: object) -> None:
     LOGGER.info(json.dumps({"event": event, **fields}, separators=(",", ":"), default=str))
 
 
+@dataclass(slots=True)
+class CaptureStats:
+    """Counters printed as a capture summary for physical debugging."""
+
+    session_id: str
+    label: str
+    scenario: str | None
+    interface: str
+    target_ip: str
+    started_at: float
+    raw_packets_seen: int = 0
+    telemetry_intervals: int = 0
+    windows_written: int = 0
+    malformed_rows: int = 0
+    post_successes: int = 0
+    post_failures: int = 0
+
+    def render(self, output_path: Path | None, duration_seconds: float | None) -> str:
+        elapsed = time.monotonic() - self.started_at
+        lines = [
+            "AEGIS-TWIN CAPTURE SUMMARY",
+            f"Session ID: {self.session_id}",
+            f"Label: {self.label}",
+            f"Scenario: {self.scenario or '(none)'}",
+            "Source mode: live_hardware",
+            "Sensor: tshark_npcap",
+            f"Interface: {self.interface}",
+            f"Target IP: {self.target_ip}",
+            f"Requested duration: {duration_seconds if duration_seconds else 'unbounded (Ctrl+C to stop)'}",
+            f"Elapsed seconds: {elapsed:.1f}",
+            f"Raw packets seen: {self.raw_packets_seen}",
+            f"Telemetry intervals: {self.telemetry_intervals}",
+            f"20-point windows written: {self.windows_written}",
+            f"Malformed packet rows: {self.malformed_rows}",
+            f"API POST successes: {self.post_successes}",
+            f"API POST failures: {self.post_failures}",
+            f"Output path: {output_path if output_path else '(not recording)'}",
+        ]
+        return "\n".join(lines)
+
+
 @dataclass(frozen=True, slots=True)
 class PacketRecord:
     timestamp: float
@@ -317,6 +358,23 @@ def run_live(args: argparse.Namespace, executable: Path) -> int:
     command = build_tshark_command(executable, args.interface, args.target_ip)
     stopped = threading.Event()
     recorder = SessionRecorder(args.record, args.label, args.scenario) if args.record else None
+    capture_started = time.monotonic()
+    stats = CaptureStats(
+        session_id=args.session_id,
+        label=args.label,
+        scenario=args.scenario,
+        interface=args.interface,
+        target_ip=args.target_ip,
+        started_at=capture_started,
+    )
+
+    def duration_expired() -> bool:
+        return bool(args.duration_seconds) and (time.monotonic() - capture_started) >= args.duration_seconds
+
+    def finish(exit_code: int) -> int:
+        print(stats.render(args.record, args.duration_seconds))
+        return exit_code
+
     try:
         while not stopped.is_set():
             log_event("sensor_started", interface=args.interface, target_ip=args.target_ip, sensor="tshark_npcap")
@@ -346,6 +404,9 @@ def run_live(args: argparse.Namespace, executable: Path) -> int:
             next_emit = time.monotonic() + args.sample_interval
             try:
                 while process.poll() is None and not stopped.is_set():
+                    if duration_expired():
+                        stopped.set()
+                        break
                     wait = max(0.0, next_emit - time.monotonic())
                     time.sleep(min(wait, 0.1))
                     if time.monotonic() < next_emit:
@@ -375,8 +436,14 @@ def run_live(args: argparse.Namespace, executable: Path) -> int:
                         session_id=args.session_id,
                     )
                     recorded = recorder.add(payload) if recorder else False
+                    stats.raw_packets_seen += len(accumulator.packets)
+                    stats.telemetry_intervals += 1
+                    stats.malformed_rows += malformed
+                    if recorded:
+                        stats.windows_written += 1
                     try:
                         prediction = post_window(args.api_url, payload)
+                        stats.post_successes += 1
                         log_event(
                             "telemetry_window_sent",
                             packets=len(accumulator.packets),
@@ -386,6 +453,7 @@ def run_live(args: argparse.Namespace, executable: Path) -> int:
                             recorded=recorded,
                         )
                     except ConnectionError as exc:
+                        stats.post_failures += 1
                         log_event("telemetry_post_failed", error=str(exc))
                     next_emit += args.sample_interval
             finally:
@@ -410,14 +478,17 @@ def run_live(args: argparse.Namespace, executable: Path) -> int:
                     exit_code=process.returncode,
                     diagnostic=" | ".join(diagnostics)[-500:],
                 )
+            if stopped.is_set():
+                return finish(0)
             if not args.reconnect:
-                return process.returncode or 1
+                return finish(process.returncode or 1)
             log_event("sensor_reconnecting", delay_seconds=args.reconnect_delay)
             time.sleep(args.reconnect_delay)
     except KeyboardInterrupt:
         stopped.set()
         log_event("sensor_stopped", reason="operator_interrupt")
-        return 0
+        return finish(0)
+    return finish(0)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -436,6 +507,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--fixture", type=Path, help="TShark TSV fixture used only with --dry-run")
     parser.add_argument("--list-interfaces", action="store_true")
+    parser.add_argument(
+        "--duration-seconds",
+        type=float,
+        default=None,
+        help="Stop cleanly after this many seconds and print a capture summary; omit for unbounded Ctrl+C capture.",
+    )
     parser.add_argument("--no-reconnect", dest="reconnect", action="store_false")
     parser.set_defaults(reconnect=True)
     parser.add_argument("--reconnect-delay", type=float, default=2.0)
@@ -451,6 +528,8 @@ def main(argv: Iterable[str] | None = None) -> int:
         parser.error("--sample-interval must be greater than zero")
     if args.reconnect_delay < 0:
         parser.error("--reconnect-delay cannot be negative")
+    if args.duration_seconds is not None and args.duration_seconds <= 0:
+        parser.error("--duration-seconds must be greater than zero")
     if args.fixture and not args.dry_run:
         parser.error("--fixture requires --dry-run")
     if args.dry_run and args.fixture:

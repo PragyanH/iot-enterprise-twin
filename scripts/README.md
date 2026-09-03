@@ -18,11 +18,26 @@ Implemented scripts:
 - `zeek_tail.py`: tails the JSON `aegis_live.log` stream and posts one-second Pi telemetry windows to FastAPI.
 - `zeek/aegis-live.zeek`: emits live SYN/handshake counters for the Raspberry Pi target.
 - `run_demo_acceptance.py`: executes the complete normal → known SYN/T1498.001 → exactly-one incident → frozen forensic report → replay containment → 1/3, 2/3, 3/3 recovery → verified closure workflow repeatedly without requiring the web stack.
+- `finals_preflight.py`: read-only Step 4A readiness checker for the physical topology (runtime/artifacts/storage/TShark/Npcap/backend/Pi/attack controller/SMTP). Never launches an attack or calls remediation.
+- `validate_pi_sessions.py`: Step 4A dataset-quality gate for a captured `data/finals-capture/pi_sessions.jsonl`. Rejects malformed/mislabeled physical data and reports a normal-vs-SYN separation sanity check before Step 4B training.
+- `lab_vm/`: isolated VMware lab attack tooling (`pi_syn_demo.py` controlled SYN generator, `aegis_lab_agent.py` attack controller). See `scripts/lab_vm/README.md`.
 
 Quick verification:
 
 ```bash
 python scripts/run_demo_acceptance.py --loops 20
+```
+
+Check finals hardware readiness (safe, read-only, never launches an attack):
+
+```bash
+python scripts/finals_preflight.py --json
+```
+
+Validate a captured physical dataset before Step 4B training:
+
+```bash
+python scripts/validate_pi_sessions.py data/finals-capture/pi_sessions.jsonl --json --write-manifest
 ```
 
 Bootstrap learned demo artifacts inside the backend environment:
@@ -45,10 +60,12 @@ Validate parsing without TShark or live packets:
 python scripts/tshark_live.py --dry-run --fixture scripts/fixtures/tshark_syn_sample.tsv
 ```
 
-Capture and record a labelled normal session:
+Capture and record a labelled normal session (bounded to 60 seconds and
+written to the dedicated real-capture directory, see
+`doc/STEP4_REAL_DATA_CAPTURE.md`):
 
 ```powershell
-python scripts/tshark_live.py --interface 4 --target-ip 192.168.56.20 --record data/pi_sessions.jsonl --label normal --scenario finals-baseline
+python scripts/tshark_live.py --interface 4 --target-ip 192.168.56.20 --record data/finals-capture/pi_sessions.jsonl --label normal --scenario finals-normal-01 --duration-seconds 60
 ```
 
 The adapter intentionally exits with a clear error when TShark is unavailable; it never replaces failed live capture with generated telemetry.

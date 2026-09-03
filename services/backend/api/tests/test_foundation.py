@@ -18,11 +18,14 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT))
 
 from scripts.tshark_live import (
+    CaptureStats,
     SessionRecorder,
     WindowAccumulator,
+    build_parser,
     build_tshark_command,
     locate_tshark,
     parse_tshark_line,
+    run_live,
 )
 
 
@@ -199,6 +202,110 @@ def test_live_hardware_payload_is_sensor_neutral_and_explainable() -> None:
     assert payload["canonical_features"]["syn_rate"] == 250.0  # type: ignore[index]
     assert payload["rule"]["rule_id"] == "AEGIS-SYN-001"  # type: ignore[index]
     assert payload["rule"]["matched"] is True  # type: ignore[index]
+
+
+def test_capture_stats_render_reports_every_summary_field() -> None:
+    stats = CaptureStats(
+        session_id="pi-20260903T100000Z-abcdef01",
+        label="normal",
+        scenario="finals-normal-01",
+        interface="4",
+        target_ip="192.168.56.20",
+        started_at=0.0,
+        raw_packets_seen=42,
+        telemetry_intervals=3,
+        windows_written=1,
+        malformed_rows=2,
+        post_successes=3,
+        post_failures=0,
+    )
+    summary = stats.render(Path("data/finals-capture/pi_sessions.jsonl"), 60.0)
+    assert "AEGIS-TWIN CAPTURE SUMMARY" in summary
+    assert "Session ID: pi-20260903T100000Z-abcdef01" in summary
+    assert "Label: normal" in summary
+    assert "Scenario: finals-normal-01" in summary
+    assert "Source mode: live_hardware" in summary
+    assert "Sensor: tshark_npcap" in summary
+    assert "Raw packets seen: 42" in summary
+    assert "Telemetry intervals: 3" in summary
+    assert "20-point windows written: 1" in summary
+    assert "Malformed packet rows: 2" in summary
+    assert "API POST successes: 3" in summary
+    assert "API POST failures: 0" in summary
+    assert "Output path: data" in summary
+
+
+def test_capture_stats_render_without_recording_notes_not_recording() -> None:
+    stats = CaptureStats(
+        session_id="s",
+        label="normal",
+        scenario=None,
+        interface="4",
+        target_ip="192.168.56.20",
+        started_at=0.0,
+    )
+    summary = stats.render(None, None)
+    assert "Scenario: (none)" in summary
+    assert "Output path: (not recording)" in summary
+    assert "unbounded (Ctrl+C to stop)" in summary
+
+
+class _FakeStream:
+    def readline(self) -> str:
+        return ""
+
+
+class _FakeProcess:
+    def __init__(self) -> None:
+        self.stdout = _FakeStream()
+        self.stderr = _FakeStream()
+        self.returncode: int | None = None
+        self._terminated = False
+
+    def poll(self) -> int | None:
+        return self.returncode if self._terminated else None
+
+    def terminate(self) -> None:
+        self._terminated = True
+        self.returncode = 0
+
+    def kill(self) -> None:
+        self._terminated = True
+        self.returncode = -9
+
+    def wait(self, timeout: float | None = None) -> int | None:
+        return self.returncode
+
+
+def test_duration_seconds_stops_cleanly_and_prints_capture_summary(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr("scripts.tshark_live.subprocess.Popen", lambda *args, **kwargs: _FakeProcess())
+    monkeypatch.setattr(
+        "scripts.tshark_live.post_window",
+        lambda *args, **kwargs: {"trust": 98.0, "state": "HEALTHY"},
+    )
+    parser = build_parser()
+    args = parser.parse_args(
+        [
+            "--interface",
+            "4",
+            "--target-ip",
+            "192.168.56.20",
+            "--sample-interval",
+            "0.05",
+            "--duration-seconds",
+            "0.15",
+            "--session-id",
+            "test-session-duration",
+        ]
+    )
+    exit_code = run_live(args, Path("tshark"))
+    assert exit_code == 0
+    output = capsys.readouterr().out
+    assert "AEGIS-TWIN CAPTURE SUMMARY" in output
+    assert "Session ID: test-session-duration" in output
+    assert "Requested duration: 0.15" in output
 
 
 def test_replay_provenance_is_never_live_hardware() -> None:

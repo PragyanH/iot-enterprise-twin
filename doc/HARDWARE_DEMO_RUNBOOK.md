@@ -27,6 +27,23 @@ python scripts/tshark_live.py --list-interfaces
 Test-Connection 192.168.56.20 -Count 3
 ```
 
+## Step 4A: run the finals preflight checker first
+
+Before any physical session, run the safe, read-only readiness checker. It
+never launches an attack and never calls remediation:
+
+```powershell
+python scripts/finals_preflight.py --pi-ip 192.168.56.20 --interface 4 --controller-url http://172.16.50.10:9000 --json
+```
+
+It reports Python/backend/package readiness, model/rule artifact presence,
+storage writability, `TSHARK AVAILABLE` vs `NPCAP CAPTURE READY` as distinct
+facts, backend `/api/v1/health` + `/api/v1/system/capabilities`, Pi ICMP
+reachability, attack-controller `/health` + `/jobs/pi-syn-demo/status`, and
+SMTP `ENABLED`/`DISABLED`/`CONFIGURED`/`MISCONFIGURED` (SMTP never fails
+overall readiness unless `--require-smtp` is passed). A `FAIL` on any other
+check means `HARDWARE ATTACK PATH NOT READY` — fix it before continuing.
+
 ## Parser-only dry run
 
 This requires neither Npcap nor a Pi:
@@ -58,22 +75,52 @@ Expected after clean traffic: `source_mode=live_hardware`, `sensor=tshark_npcap`
 
 ## Record labelled sessions
 
+Real physical captures go under the dedicated `data/finals-capture/`
+directory, kept separate from any synthetic/demo data (see
+`doc/STEP4_REAL_DATA_CAPTURE.md` for the full multi-session capture
+protocol). Use `--duration-seconds` for a deterministic, self-stopping
+capture that prints a capture summary (session ID, label, scenario, raw
+packets seen, windows written, malformed rows, POST successes/failures,
+output path) on clean exit; Ctrl+C still works for unbounded capture.
+
 Normal:
 
 ```powershell
 python scripts/tshark_live.py --interface 4 --target-ip 192.168.56.20 `
-  --record data/pi_sessions.jsonl --label normal --scenario finals-normal
+  --record data/finals-capture/pi_sessions.jsonl --label normal --scenario finals-normal-01 --duration-seconds 60
 ```
 
-Controlled SYN, only in the isolated team-owned VM/Pi lab:
+Controlled SYN, only in the isolated team-owned VM/Pi lab. **For clean
+training labels, the attack must already be running and stable before the
+`syn_flood`-labelled recording starts** — this is the opposite order from
+the live finals demo narrative (which shows baseline -> attack -> recovery
+on screen) and applies specifically to capturing training data:
+
+1. Start the registered `pi-syn-demo` job from the VM first.
+2. Wait approximately 3-5 seconds for the physical traffic signature to
+   stabilize (SYN rate up, handshake completion collapsed).
+3. Only then start the `syn_flood`-labelled recording below.
+4. Stop the recording *before* stopping the attack job, so every window
+   inside this session is genuinely attack traffic — no baseline lead-in and
+   no recovery/cooldown windows belong inside a `syn_flood` session.
 
 ```powershell
 python scripts/tshark_live.py --interface 4 --target-ip 192.168.56.20 `
-  --record data/pi_sessions.jsonl --label syn_flood --scenario pi-syn-demo
+  --record data/finals-capture/pi_sessions.jsonl --label syn_flood --scenario finals-syn-01 --duration-seconds 45
 ```
 
-Stop with Ctrl+C. Each JSONL row contains session ID, label, source, sensor, timestamp, attack job and points. Start a new process/session for each recording.
+Stop with Ctrl+C (or let `--duration-seconds` stop it for you), then stop the attack job. Each JSONL row contains session ID, label, source, sensor, timestamp, attack job and points. Start a new process/session (and therefore a new `session_id`) for each recording — do not record multiple independent sessions under one process.
 The recorder begins writing after 20 real one-second samples so every training row contains the frozen temporal sequence length; keep each capture running longer than 20 seconds.
+
+Before trusting a capture for Step 4B, run the dataset validator:
+
+```powershell
+python scripts/validate_pi_sessions.py data/finals-capture/pi_sessions.jsonl --json --write-manifest --host $env:COMPUTERNAME --pi-ip 192.168.56.20 --interface 4
+```
+
+It rejects malformed/mislabeled rows, checks session-level independence for a
+future held-out split, and prints a NORMAL vs SYN FLOOD feature comparison —
+this is a capture-quality check, not a model evaluation.
 
 ## Physical acceptance
 
@@ -123,6 +170,23 @@ Content-Type: application/json
 ```
 
 The backend never accepts shell commands. An unreachable controller is visible failure, not successful containment.
+
+The VM side of this contract is implemented by `scripts/lab_vm/aegis_lab_agent.py`
+(see `scripts/lab_vm/README.md` for the full VM install runbook, including the
+two-NIC layout). Verify it from Windows before relying on it:
+
+```powershell
+Invoke-RestMethod http://172.16.50.10:9000/health
+Invoke-RestMethod http://172.16.50.10:9000/jobs/pi-syn-demo/status
+Invoke-RestMethod -Method Post http://172.16.50.10:9000/jobs/pi-syn-demo/stop -Headers @{Authorization="Bearer $env:AEGIS_ATTACK_CONTROLLER_TOKEN"}
+```
+
+The controlled SYN scenario itself (`scripts/lab_vm/pi_syn_demo.py`) only ever
+targets one pre-configured private lab IP. A requested rate above
+`AEGIS_LAB_SYN_RATE_MAX` (default 400/s) is rejected outright (non-zero exit,
+no packets sent) rather than silently run at a lower rate; lifetime is
+clamped to `AEGIS_LAB_SYN_MAX_DURATION_SECONDS` (default 120s) regardless of
+what is requested.
 
 ## Failure handling
 

@@ -16,6 +16,7 @@ __pycache__/
 data/aegis_incidents*.db
 services/backend/api/data/*.db
 reports/incidents*/
+data/finals-capture/*.jsonl
 
 # Tooling
 .DS_Store
