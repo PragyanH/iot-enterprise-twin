@@ -52,3 +52,14 @@ python scripts/tshark_live.py --interface 4 --target-ip 192.168.56.20 --record d
 ```
 
 The adapter intentionally exits with a clear error when TShark is unavailable; it never replaces failed live capture with generated telemetry.
+
+## Demo user seed
+
+`seed_demo_users.py` idempotently creates `admin@aegis.local`, `owner@aegis.local`, and `vendor@aegis.local`. Passwords are read only from environment variables and are never embedded or printed.
+
+```powershell
+$env:AEGIS_DEMO_ADMIN_PASSWORD="choose-a-demo-secret"
+$env:AEGIS_DEMO_OWNER_PASSWORD="choose-a-different-secret"
+$env:AEGIS_DEMO_VENDOR_PASSWORD="choose-a-third-secret"
+python scripts/seed_demo_users.py
+```

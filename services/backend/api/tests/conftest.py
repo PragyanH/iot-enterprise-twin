@@ -10,3 +10,4 @@ from pathlib import Path
 _runtime_root = Path(tempfile.mkdtemp(prefix="aegis-runtime-tests-"))
 os.environ.setdefault("AEGIS_INCIDENT_DB_PATH", str(_runtime_root / "incidents.db"))
 os.environ.setdefault("AEGIS_FORENSIC_REPORTS_DIR", str(_runtime_root / "reports"))
+os.environ.setdefault("AEGIS_AUTH_DB_PATH", str(_runtime_root / "auth.db"))

@@ -5,6 +5,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 AUTH_DB_PATH = os.getenv("AEGIS_AUTH_DB_PATH", str(BASE_DIR / "data" / "aegis_auth.db"))
+AUTH_TOKEN_HOURS = int(os.getenv("AEGIS_AUTH_TOKEN_HOURS", "12"))
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 
 
@@ -45,3 +46,11 @@ INCIDENT_DB_PATH = repository_path("AEGIS_INCIDENT_DB_PATH", "data/aegis_inciden
 FORENSIC_REPORTS_DIR = repository_path("AEGIS_FORENSIC_REPORTS_DIR", "reports/incidents-v1")
 RECOVERY_CLEAN_WINDOWS = int(os.getenv("AEGIS_RECOVERY_CLEAN_WINDOWS", "3"))
 ATTACK_CONTROLLER_TIMEOUT_SECONDS = float(os.getenv("AEGIS_ATTACK_CONTROLLER_TIMEOUT_SECONDS", "3.0"))
+SMTP_ENABLED = os.getenv("AEGIS_SMTP_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+SMTP_HOST = os.getenv("AEGIS_SMTP_HOST", "")
+SMTP_PORT = int(os.getenv("AEGIS_SMTP_PORT", "587"))
+SMTP_USERNAME = os.getenv("AEGIS_SMTP_USERNAME", "")
+SMTP_PASSWORD = os.getenv("AEGIS_SMTP_PASSWORD", "")
+SMTP_FROM = os.getenv("AEGIS_SMTP_FROM", "aegis@localhost")
+SMTP_USE_TLS = os.getenv("AEGIS_SMTP_USE_TLS", "true").strip().lower() in {"1", "true", "yes", "on"}
+SMTP_TIMEOUT_SECONDS = float(os.getenv("AEGIS_SMTP_TIMEOUT_SECONDS", "5.0"))

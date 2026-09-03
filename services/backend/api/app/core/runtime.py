@@ -14,9 +14,27 @@ from app.core.config import (
     ATTACK_CONTROLLER_TIMEOUT_SECONDS,
     TSHARK_PATH,
     TSHARK_INTERFACE,
+    AUTH_DB_PATH,
+    AUTH_TOKEN_HOURS,
+    SMTP_ENABLED,
+    SMTP_HOST,
+    SMTP_PORT,
+    SMTP_USERNAME,
+    SMTP_PASSWORD,
+    SMTP_FROM,
+    SMTP_USE_TLS,
+    SMTP_TIMEOUT_SECONDS,
 )
+from pathlib import Path
+
+from app.services.auth import AuthService
 from app.services.intelligence import IntelligenceService
+from app.services.notifications import NotificationService, SMTPSettings
 from app.services.trust import AttackController, HybridTrustService
+from app.services.workflow import IncidentWorkflowService
+
+
+auth_service = AuthService(Path(AUTH_DB_PATH), token_hours=AUTH_TOKEN_HOURS)
 
 
 attack_controller = AttackController(
@@ -38,6 +56,12 @@ trust_service = HybridTrustService(
     tshark_path=TSHARK_PATH,
     tshark_interface=TSHARK_INTERFACE,
 )
+notification_service = NotificationService(SMTPSettings(
+    enabled=SMTP_ENABLED, host=SMTP_HOST, port=SMTP_PORT,
+    username=SMTP_USERNAME, password=SMTP_PASSWORD, sender=SMTP_FROM,
+    use_tls=SMTP_USE_TLS, timeout_seconds=SMTP_TIMEOUT_SECONDS,
+))
+workflow_service = IncidentWorkflowService(trust_service.incidents, auth_service, notification_service)
 intelligence_service = IntelligenceService(
     MODEL_PACKAGE_PATH,
     RULES_PATH,

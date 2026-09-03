@@ -143,6 +143,14 @@ The single trust path remains `HybridTrustEngine.score`; mock, live hardware, Ze
 - `GET /api/v1/incidents/{incident_id}`
 - `GET /api/v1/incidents/{incident_id}/timeline`
 - `GET /api/v1/incidents/{incident_id}/report`
+- `GET /api/v1/incidents/{incident_id}/report.pdf`
+- `POST /api/v1/incidents/{incident_id}/assign`
+- `POST /api/v1/incidents/{incident_id}/acknowledge`
+- `POST /api/v1/incidents/{incident_id}/notes`
+- `GET /api/v1/incidents/{incident_id}/notes`
+- `POST /api/v1/incidents/{incident_id}/email-report`
+- `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `POST /api/v1/auth/logout`
+- `GET /api/v1/auth/me`, `GET /api/v1/auth/users`
 - `GET /api/v1/system/capabilities`
 
 See `doc/FRONTEND_INTEGRATION_CONTRACT.md` for payloads.
@@ -168,3 +176,15 @@ Persistent incident documents live in `data/aegis_incidents_v1.db`; idempotent H
 ## Model package and step boundary
 
 `model-store/aegis-hybrid-trust/v1/` contains baselines, VAE checkpoints, XGBoost, calibration, metrics, manifest, canonicalization, and intelligence thresholds. Step 3 surrounds this frozen model with incident persistence, forensics, remediation, recovery, and staleness. Real-dataset training/calibration remains Step 4. Hardware results may only be reported after physical acceptance.
+
+## Step 3.5 enterprise workflow
+
+Authentication is native Windows/Python and SQLite-backed. Passwords use salted `scrypt`; only password hashes and SHA-256 session-token hashes are persisted. Opaque bearer sessions are revocable and expire after `AEGIS_AUTH_TOKEN_HOURS`. The first account must be ADMIN, after which only an authenticated ADMIN may create users. Roles are deliberately limited to ADMIN, ASSET_OWNER, and SME_VENDOR.
+
+All incident list/detail/timeline/report/assignment/note/email endpoints are protected. ADMIN sees all incidents. Other roles see only the incident currently assigned to them; an assigned ASSET_OWNER may delegate to an active SME_VENDOR. Assignment and reassignment histories, acknowledgement, notes, and email status updates are persisted as incident timeline events. Notes have no mutation or deletion operation.
+
+Assignment is committed before report refresh and SMTP delivery. SMTP is optional and disabled by default. DISABLED/FAILED delivery never invalidates assignment. Retry reuses a current report and sends only to the persisted active assignee. Configuration is environment-only and capabilities never expose credentials.
+
+Forensics retain the existing deterministic HTML and add an idempotent ReportLab PDF generated directly from the persisted incident and frozen forensic snapshot. HTML and PDF use the same incident ID. PDF failures are isolated and recorded as `pdf_status=failed`; detection, remediation, and HTML evidence continue.
+
+This step does not alter telemetry schemas, canonicalization, rules, trust composition, TShark/Npcap capture, attack-controller topology, replay, or the model package. No container, external database, Redis, cloud identity, or browser-print dependency was introduced.

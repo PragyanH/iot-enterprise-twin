@@ -293,3 +293,19 @@ For Raspberry Pi, Zeek, attack-controller, and replay setup, see
 - Avoid creating ad hoc root-level scripts and services.
 - Keep model artifacts in `model-store/` rather than in the application code directory.
 - Update this README and the technical source of truth whenever the architecture changes.
+
+## Local enterprise workflow setup
+
+Step 3.5 adds SQLite email/password authentication, role-scoped incident assignment, append-only investigation notes, optional SMTP notification, and deterministic HTML/PDF forensic reports. It does not change the frontend design or the hardware/detection pipeline.
+
+Install backend dependencies and seed local demo users from environment-only passwords:
+
+```powershell
+services\backend\api\.venv\Scripts\python.exe -m pip install -r services\backend\api\requirements.txt
+$env:AEGIS_DEMO_ADMIN_PASSWORD="choose-a-demo-secret"
+$env:AEGIS_DEMO_OWNER_PASSWORD="choose-a-different-secret"
+$env:AEGIS_DEMO_VENDOR_PASSWORD="choose-a-third-secret"
+services\backend\api\.venv\Scripts\python.exe scripts\seed_demo_users.py
+```
+
+SMTP remains safely disabled with `AEGIS_SMTP_ENABLED=false`. For real delivery, set the host, port, username, password, from-address, and TLS values documented in `.env.example` before starting FastAPI. Assignment and all cyber lifecycle functions continue if SMTP is offline or rejects delivery.

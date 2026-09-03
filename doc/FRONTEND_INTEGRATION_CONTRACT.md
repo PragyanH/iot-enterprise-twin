@@ -1,6 +1,6 @@
 # Aegis-Twin Frontend Integration Contract
 
-Contract stage: Step 1 (foundation and live telemetry). Last updated: 2026-09-03.
+Contract stage: Step 3.5 (enterprise incident workflow). Last updated: 2026-09-03.
 
 The backend is authoritative for security/model values. React must render returned values and must not calculate trust, detector percentages, rule results, canonical values, or provenance. Fields planned for later stages are clearly marked and must not be faked meanwhile.
 
@@ -48,9 +48,94 @@ Returns `{"service":"aegis-twin-api","status":"ok"}`.
 
 Returns `{"status":"ok"}`. This checks the API process, not Pi reachability.
 
-### `POST /api/v1/auth/login`
+## Step 3.5 authentication and enterprise incident workflow
 
-Compatibility placeholder only. It currently returns a message and must not be presented as completed authentication.
+All `/api/v1/incidents...` routes require `Authorization: Bearer <access_token>`. Detection, telemetry, fleet, trust SSE, XAI, and device remediation routes retain their existing public demo behavior. Authentication errors are `401`; valid users without access receive `403`.
+
+### Authentication
+
+The first account must be an `ADMIN`. Every later registration requires an ADMIN bearer token.
+
+```text
+POST /api/v1/auth/register
+POST /api/v1/auth/login
+POST /api/v1/auth/logout
+GET  /api/v1/auth/me
+GET  /api/v1/auth/users       (ADMIN only)
+```
+
+Register request and public user response:
+
+```json
+{"name":"SOC Admin","email":"admin@aegis.local","password":"provided-out-of-band","role":"ADMIN","organization":"Aegis Lab","team":"SOC"}
+```
+
+```json
+{"user_id":"1","name":"SOC Admin","email":"admin@aegis.local","role":"ADMIN","active":true,"organization":"Aegis Lab","team":"SOC","created_at":"2026-09-03T12:00:00+00:00"}
+```
+
+Login returns a revocable bearer token and the same public user object:
+
+```json
+{"access_token":"opaque-random-token","token_type":"bearer","expires_at":"2026-09-04T00:00:00+00:00","user":{"user_id":"1","name":"SOC Admin","email":"admin@aegis.local","role":"ADMIN","active":true}}
+```
+
+Role values are exactly `ADMIN`, `ASSET_OWNER`, and `SME_VENDOR`. The UI must discard its token after logout. Invalid credentials, expired/revoked tokens, and inactive users produce `401`. Duplicate email produces `409`; invalid input produces `422`.
+
+### Assignment and visibility
+
+```text
+POST /api/v1/incidents/{incident_id}/assign
+POST /api/v1/incidents/{incident_id}/acknowledge
+```
+
+ADMIN sees and assigns any incident. ASSET_OWNER and SME_VENDOR see only incidents assigned directly to them. An assigned ASSET_OWNER may delegate that incident only to an SME_VENDOR. Assignment request:
+
+```json
+{"assignee_user_id":"2","reason":"Primary owner for PI-001"}
+```
+
+The incident returns `assignment_status` as `UNASSIGNED`, `ASSIGNED`, or `ACKNOWLEDGED`, plus `assigned_to_user_id`, `assigned_to_name`, `assigned_to_email`, `assigned_to_role`, `assigned_by_user_id`, `assigned_at`, and append-only `assignment_history`. Use `GET /api/v1/auth/users` for the frontend-friendly assignee list.
+
+### Notes
+
+```text
+POST /api/v1/incidents/{incident_id}/notes
+GET  /api/v1/incidents/{incident_id}/notes
+```
+
+```json
+{"text":"Validated SYN exhaustion indicators against the frozen capture."}
+```
+
+```json
+{"note_id":"NOTE-0001","incident_id":"INC-20260903-0001","author_user_id":"3","author_name":"Vendor SME","author_role":"SME_VENDOR","timestamp":"2026-09-03T12:04:00+00:00","text":"Validated SYN exhaustion indicators against the frozen capture."}
+```
+
+Notes are append-only. There is no update/delete contract.
+
+### Email
+
+Assignment is saved before email is attempted. Incident fields are `email_status`, `email_recipient`, `email_sent_at`, `email_error`, `email_attempts`, and `report_email_status`. Statuses are `NOT_REQUESTED`, `PENDING`, `SENT`, `FAILED`, and `DISABLED`. `DISABLED` is a normal finals-safe state and does not increment attempts.
+
+```text
+POST /api/v1/incidents/{incident_id}/email-report
+```
+
+This explicitly retries delivery to the current authorized assignee and reuses the existing report when it is current.
+
+### Reports
+
+```text
+GET /api/v1/incidents/{incident_id}/report
+GET /api/v1/incidents/{incident_id}/report.pdf
+```
+
+The incident `report` object exposes `html_ready`, `html_path`, `pdf_status`, `pdf_ready`, `pdf_path`, `pdf_generated_at`, and `pdf_error`, while preserving Step 3 compatibility fields `status`, `report_ready`, `path`, and `generated_at`. Treat paths as diagnostics; use the authenticated download endpoints in UI links.
+
+### Enterprise capability payload
+
+`GET /api/v1/system/capabilities` remains public and now includes safe `authentication`, `email`, and `reports` capability objects. It never returns SMTP credentials or passwords.
 
 ### `GET /api/v1/fleet`
 
