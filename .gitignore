@@ -8,11 +8,13 @@
 app/web/node_modules/
 app/web/.next/
 app/web/out/
+app/web/*.tsbuildinfo
 
 # Python caches
 __pycache__/
 *.pyc
 data/aegis_incidents*.db
+services/backend/api/data/*.db
 reports/incidents*/
 
 # Tooling
