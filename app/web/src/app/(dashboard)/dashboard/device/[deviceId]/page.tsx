@@ -1,0 +1,2 @@
+import { DeviceDashboard } from "@/components/device/DeviceDashboard";
+export default function DevicePage({ params }: { params: { deviceId: string } }) { return <DeviceDashboard deviceId={params.deviceId} />; }
