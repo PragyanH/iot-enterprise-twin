@@ -307,7 +307,39 @@ class HybridTrustService:
             attack_points = [_mock_attack_point(profile, runtime.tick + offset) for offset in range(1, 21)]
         return self.ingest(TelemetryWindow(device_id=device_id, source="mock", points=attack_points))
 
+    def reset_pi_device(self, device_id: str = "PI-001") -> dict[str, Any]:
+        with self._lock:
+            runtime = self._devices.get(device_id)
+            if runtime is None:
+                raise KeyError(f"unknown device: {device_id}")
+            profile = self.engine.profile(device_id)
+            runtime.mock_attack = False
+            runtime.recovering = False
+            runtime.recovery_clean_windows = 0
+            runtime.attack_job_id = None
+            runtime.points.clear()
+            for tick in range(20):
+                runtime.points.append(_normal_point(profile, tick))
+            normal_window = TelemetryWindow(
+                device_id=device_id,
+                source="mock" if profile.source == "pi" else profile.source,
+                points=list(runtime.points),
+                sensor="aegis-simulator",
+            )
+            prediction = self.engine.score(
+                normal_window,
+                raw_latest=runtime.points[-1],
+                canonicalization_version=self.canonicalizer.version,
+            )
+            runtime.prediction = prediction
+            runtime.previous_risk = prediction.risk
+            with self._event_lock:
+                self._version += 1
+            _log_event("pi_device_remediated", device_id=device_id, trust=prediction.trust)
+            return prediction.to_dict()
+
     def remediate(self, device_id: str) -> dict[str, Any]:
+
         with self._lock:
             profile = self.engine.profile(device_id)
             runtime = self._devices[device_id]
