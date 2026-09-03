@@ -12,16 +12,16 @@ const config: Config = {
       colors: {
         brand: {
           primary: "var(--color-primary)",
-          secondary: "var(--color-secondary)",
+          secondary: "var(--color-complementary)",
           accent: "var(--color-accent)",
           success: "var(--color-success)",
           danger: "var(--color-danger)",
-          panel: "var(--color-panel)",
+          panel: "var(--color-surface)",
           surface: "var(--color-surface)"
         }
       },
       boxShadow: {
-        glow: "0 0 24px rgba(44, 140, 255, 0.45)"
+        glow: "0 0 24px var(--color-shadow)"
       }
     }
   },
