@@ -100,11 +100,44 @@ function TrustGraphic() {
         <span>0</span>
       </div>
       <svg viewBox="0 0 420 150" role="img" aria-label="Trust trajectory from 98 to 23 to 97">
+        <defs>
+          <linearGradient id="trustGradient" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="var(--green)" />
+            <stop offset="35%" stopColor="var(--green)" />
+            <stop offset="50%" stopColor="var(--red)" />
+            <stop offset="68%" stopColor="var(--red)" />
+            <stop offset="85%" stopColor="var(--green)" />
+            <stop offset="100%" stopColor="var(--green)" />
+          </linearGradient>
+          <linearGradient id="trustAreaGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#00F5A0" stopOpacity="0.25" />
+            <stop offset="60%" stopColor="#FF0055" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+          </linearGradient>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
         <path className="poc-chart-grid" d="M0 25H420M0 75H420M0 125H420" />
-        <path className="poc-trust-line" d="M12 28 C70 29 96 32 135 56 S190 122 230 120 S300 106 345 72 S385 35 408 30" />
-        <circle cx="12" cy="28" r="5" fill="var(--green)" />
-        <circle cx="230" cy="120" r="5" fill="var(--red)" />
-        <circle cx="408" cy="30" r="5" fill="var(--green)" />
+        <path
+          d="M12 28 C70 29 96 32 135 56 S190 122 230 120 S300 106 345 72 S385 35 408 30 L408 145 L12 145 Z"
+          fill="url(#trustAreaGradient)"
+        />
+        <path
+          className="poc-trust-line"
+          d="M12 28 C70 29 96 32 135 56 S190 122 230 120 S300 106 345 72 S385 35 408 30"
+          stroke="url(#trustGradient)"
+          strokeWidth="3.5"
+          fill="none"
+          filter="url(#glow)"
+        />
+        <circle cx="12" cy="28" r="6" fill="#00F5A0" filter="url(#glow)" />
+        <circle cx="12" cy="28" r="2.5" fill="#FFFFFF" />
+        <circle cx="230" cy="120" r="6" fill="#FF0055" filter="url(#glow)" />
+        <circle cx="230" cy="120" r="2.5" fill="#FFFFFF" />
+        <circle cx="408" cy="30" r="6" fill="#00F5A0" filter="url(#glow)" />
+        <circle cx="408" cy="30" r="2.5" fill="#FFFFFF" />
       </svg>
       <div className="poc-chart-markers">
         <span>
