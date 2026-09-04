@@ -4013,8 +4013,8 @@ h2 { font: 600 19px Arial, Helvetica, sans-serif; margin-top: 8px; }
 
 .poc-axis-y {
   position: absolute;
-  top: 14px;
-  left: 16px;
+  top: 12px;
+  left: 14px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -4027,8 +4027,8 @@ h2 { font: 600 19px Arial, Helvetica, sans-serif; margin-top: 8px; }
 
 .poc-axis-x {
   position: absolute;
-  bottom: 14px;
-  right: 16px;
+  bottom: 12px;
+  right: 14px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -4050,8 +4050,8 @@ h2 { font: 600 19px Arial, Helvetica, sans-serif; margin-top: 8px; }
   pointer-events: none;
 }
 
-.wedge-quadrant.q-top-left { top: 35px; left: 24px; }
-.wedge-quadrant.q-bottom-right { bottom: 35px; right: 24px; color: var(--cyan); opacity: 0.6; }
+.wedge-quadrant.q-top-left { top: 32px; left: 16px; }
+.wedge-quadrant.q-bottom-right { top: 120px; right: 24px; color: var(--cyan); opacity: 0.7; }
 
 .poc-market-dot {
   position: absolute;
@@ -4088,12 +4088,12 @@ h2 { font: 600 19px Arial, Helvetica, sans-serif; margin-top: 8px; }
 }
 
 .poc-market-dot.armis { top: 60px; left: 110px; }
-.poc-market-dot.darktrace { top: 100px; left: 200px; }
-.poc-market-dot.nozomi { top: 50px; left: 270px; }
+.poc-market-dot.darktrace { top: 110px; left: 190px; }
+.poc-market-dot.nozomi { top: 50px; left: 260px; }
 
 .poc-market-dot.aegis {
-  bottom: 40px;
-  right: 110px;
+  bottom: 38px;
+  right: 60px;
   background: color-mix(in srgb, var(--cyan) 12%, var(--color-surface));
   border: 2px solid var(--cyan);
   box-shadow: 0 0 20px color-mix(in srgb, var(--cyan) 30%, transparent);
