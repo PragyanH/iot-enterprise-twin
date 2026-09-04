@@ -30,10 +30,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function EvidenceChannel({ name, question, detail }: { name: string; question: string; detail: string }) {
   return (
     <article className="poc-evidence-card">
-      <div className="card-top">
-        <strong>{name}</strong>
-        <span className="card-channel-tag">CHANNEL</span>
-      </div>
+      <strong>{name}</strong>
       <b>{question}</b>
       <p>{detail}</p>
     </article>
@@ -49,10 +46,8 @@ function ComparisonTable({ rows, industry }: { rows: string[][]; industry?: bool
       <table className="poc-table">
         <thead>
           <tr>
-            {headings.map((heading, i) => (
-              <th key={heading} className={i === headings.length - 1 ? "th-highlight" : ""}>
-                {heading}
-              </th>
+            {headings.map((heading) => (
+              <th key={heading}>{heading}</th>
             ))}
           </tr>
         </thead>
@@ -107,21 +102,24 @@ function TrustGraphic() {
       <svg viewBox="0 0 420 150" role="img" aria-label="Trust trajectory from 98 to 23 to 97">
         <path className="poc-chart-grid" d="M0 25H420M0 75H420M0 125H420" />
         <path className="poc-trust-line" d="M12 28 C70 29 96 32 135 56 S190 122 230 120 S300 106 345 72 S385 35 408 30" />
-        <circle cx="12" cy="28" r="6" className="circle-healthy" />
-        <circle cx="230" cy="120" r="6" className="circle-attack" />
-        <circle cx="408" cy="30" r="6" className="circle-restored" />
+        <circle cx="12" cy="28" r="5" fill="var(--green)" />
+        <circle cx="230" cy="120" r="5" fill="var(--red)" />
+        <circle cx="408" cy="30" r="5" fill="var(--green)" />
       </svg>
       <div className="poc-chart-markers">
-        <span className="marker-healthy">
-          98<br />
+        <span>
+          98
+          <br />
           <small>HEALTHY</small>
         </span>
-        <span className="marker-attack">
-          23<br />
-          <small>ATTACK</small>
+        <span style={{ color: "var(--red)" }}>
+          23
+          <br />
+          <small style={{ color: "var(--red)" }}>ATTACK</small>
         </span>
-        <span className="marker-restored">
-          97<br />
+        <span>
+          97
+          <br />
           <small>RESTORED</small>
         </span>
       </div>
@@ -144,6 +142,7 @@ function MarketWedgeGraphic() {
 
 export function CompetitiveLandscape() {
   const [edge, setEdge] = useState<Edge>("research");
+
   return (
     <section className="landscape-section poc-module">
       <header className="poc-hero">
@@ -160,7 +159,7 @@ export function CompetitiveLandscape() {
         </div>
       </header>
 
-      {/* 7-Stage Interactive Pipeline Lifecycle Track */}
+      {/* Lifecycle Stage Pills */}
       <div className="poc-lifecycle">
         {stages.map((stage, index) => (
           <div className="poc-stage" key={stage}>
@@ -171,23 +170,26 @@ export function CompetitiveLandscape() {
         ))}
       </div>
 
-      <div className="poc-tabs" role="tablist" aria-label="POC positioning sections">
-        <button
-          className={edge === "research" ? "active" : ""}
-          onClick={() => setEdge("research")}
-          role="tab"
-          aria-selected={edge === "research"}
-        >
-          01 · RESEARCH EDGE
-        </button>
-        <button
-          className={edge === "industry" ? "active" : ""}
-          onClick={() => setEdge("industry")}
-          role="tab"
-          aria-selected={edge === "industry"}
-        >
-          02 · INDUSTRY EDGE
-        </button>
+      {/* Modern Neon Segmented Tab Switcher */}
+      <div className="poc-tabs-wrapper">
+        <div className="poc-tabs" role="tablist" aria-label="POC positioning sections">
+          <button
+            className={edge === "research" ? "active" : ""}
+            onClick={() => setEdge("research")}
+            role="tab"
+            aria-selected={edge === "research"}
+          >
+            01 · RESEARCH EDGE
+          </button>
+          <button
+            className={edge === "industry" ? "active" : ""}
+            onClick={() => setEdge("industry")}
+            role="tab"
+            aria-selected={edge === "industry"}
+          >
+            02 · INDUSTRY EDGE
+          </button>
+        </div>
       </div>
 
       {edge === "research" ? (
