@@ -206,7 +206,7 @@ function RadarTelemetryChart({
   );
 }
 
-// 3. Security History Dual Waveform Charts
+// 3. Security History Dual Waveform Charts (Green Trust Line & Red Anomaly Line)
 function SecurityDualWaveformChart({ points }: { points: Array<{ time: string; trust: number; anomaly: number; synRate: number }> }) {
   const width = 680;
   const height = 140;
@@ -215,13 +215,17 @@ function SecurityDualWaveformChart({ points }: { points: Array<{ time: string; t
     .map((p, i) => `${i ? "L" : "M"} ${(i / Math.max(points.length - 1, 1)) * width} ${height - p.trust * 1.25}`)
     .join(" ");
 
+  const anomalyPath = points
+    .map((p, i) => `${i ? "L" : "M"} ${(i / Math.max(points.length - 1, 1)) * width} ${height - Math.min(100, p.anomaly * 1.25)}`)
+    .join(" ");
+
   const synPath = points
     .map((p, i) => `${i ? "L" : "M"} ${(i / Math.max(points.length - 1, 1)) * width} ${height - Math.min(100, (p.synRate / 280) * 100) * 1.25}`)
     .join(" ");
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-      {/* Waveform 1: Trust & Anomaly Waveform */}
+      {/* Waveform 1: Trust (Green) & Anomaly (Red) Waveform */}
       <section className="history panel" style={{ marginTop: 0 }}>
         <div className="panel-heading">
           <div>
@@ -229,12 +233,15 @@ function SecurityDualWaveformChart({ points }: { points: Array<{ time: string; t
             <h2 style={{ fontSize: "14px" }}>Trust &amp; Anomaly Index</h2>
           </div>
           <div className="chart-key" style={{ fontSize: "9px" }}>
-            <span className="trust-key" /> Trust <span className="anomaly-key" /> Anomaly
+            <span className="trust-key" /> Nominal Trust <span className="anomaly-key" /> Cyber Anomaly
           </div>
         </div>
         <svg className="history-chart" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" style={{ height: "140px" }}>
           <path className="grid-line" d="M0 20H680M0 60H680M0 100H680" />
+          {/* Green Nominal Trust Line */}
           <path className="trust-line" d={trustPath} />
+          {/* Red Anomaly Line */}
+          <path className="anomaly-line" d={anomalyPath} />
         </svg>
       </section>
 
