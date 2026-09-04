@@ -6,5 +6,55 @@ import { useDevices } from "@/features/device/DeviceProvider";
 export function IndustrialHardware() {
   const { devices } = useDevices();
   const pi = devices.find((device) => device.id === "PI-001");
-  return <Link href="/dashboard/hardware/pi-001" className="industrial-hardware panel"><div className="hardware-copy"><span className="eyebrow">{pi?.sourceMode?.replaceAll("_", " ") ?? "hardware awaiting telemetry"} · PI-001</span><h2>{pi?.name ?? "Raspberry Pi security camera"}</h2><p>Trust {pi?.trustScore ?? "--"}/100 · {(pi?.backendState?.state ?? "BOOTSTRAP").replaceAll("_", " ")} · {pi?.sensor ?? "sensor awaiting telemetry"}. Open the device to inspect live hybrid evidence and remediation.</p><span className="hardware-cta">OPEN PI-001 DEVICE DASHBOARD →</span></div><div className="hardware-diagram" aria-label="Raspberry Pi security camera data path"><svg viewBox="0 0 620 260" role="img"><path className="hardware-line" d="M72 130H180M270 130H350M440 130H548" /><circle className="hardware-flow-dot" cx="126" cy="130" r="4" /><circle className="hardware-flow-dot" cx="310" cy="130" r="4" /><circle className="hardware-flow-dot" cx="494" cy="130" r="4" /><g className="hardware-node"><rect x="20" y="82" width="105" height="96" /><circle cx="72" cy="119" r="21" /><circle cx="72" cy="119" r="10" /><path d="M72 98V140M51 119H93" /><text x="72" y="163">PI-001</text></g><g className="hardware-node"><rect x="180" y="82" width="90" height="96" /><path d="M201 109h48v41h-48zM210 102h30M210 157h30" /><text x="225" y="163">CAMERA</text></g><g className="hardware-node hardware-aegis"><rect x="350" y="74" width="90" height="112" /><path d="M395 96l22 10v22c0 18-12 30-22 35-10-5-22-17-22-35v-22z" /><path d="M384 128l8 8 15-18" /><text x="395" y="168">AEGIS</text></g><g className="hardware-node"><rect x="548" y="82" width="52" height="96" /><path d="M560 105h28M560 119h28M560 133h28" /><text x="574" y="163">API</text></g><text className="hardware-label" x="126" y="111">NETWORK</text><text className="hardware-label" x="310" y="111">TELEMETRY</text><text className="hardware-label" x="494" y="111">STATE</text></svg></div></Link>;
+
+  return (
+    <Link href="/dashboard/hardware/pi-001" className="industrial-hardware panel">
+      <div className="hardware-copy">
+        <span className="eyebrow">{pi?.sourceMode?.replaceAll("_", " ") ?? "hardware awaiting telemetry"} · PI-001</span>
+        <h2>{pi?.name ?? "Raspberry Pi security camera"}</h2>
+        <p>
+          Trust {pi?.trustScore ?? "--"}/100 · {(pi?.backendState?.state ?? "BOOTSTRAP").replaceAll("_", " ")} · {pi?.sensor ?? "sensor awaiting telemetry"}. Open the device to inspect live hybrid evidence and remediation.
+        </p>
+        <span className="hardware-cta">OPEN PI-001 DEVICE DASHBOARD →</span>
+      </div>
+
+      <div className="hardware-diagram" aria-label="Raspberry Pi security camera connection">
+        <svg viewBox="0 0 500 140" role="img">
+          {/* Connecting signal line with flow dot */}
+          <path className="hardware-line" d="M190 70H310" />
+          <circle className="hardware-flow-dot" cx="250" cy="70" r="3.5" />
+
+          {/* Node 1: Raspberry Pi (PI-001) */}
+          <g className="hardware-node">
+            <rect x="70" y="30" width="120" height="80" rx="6" />
+            {/* Chip Body */}
+            <rect x="115" y="48" width="30" height="24" rx="2" fill="none" stroke="var(--color-primary)" strokeWidth="1.5" />
+            {/* Chip Core Notch */}
+            <circle cx="122" cy="54" r="2" fill="var(--color-primary)" />
+            {/* Pins (Top & Bottom) */}
+            <path d="M120 43v5M127 43v5M134 43v5M141 43v5M120 72v5M127 72v5M134 72v5M141 72v5" stroke="var(--color-primary)" strokeWidth="1.5" />
+            {/* Pins (Left & Right) */}
+            <path d="M110 54h5M110 60h5M110 66h5M145 54h5M145 60h5M145 66h5" stroke="var(--color-primary)" strokeWidth="1.5" />
+            <text x="130" y="94" textAnchor="middle" style={{ fontSize: "9px", fontWeight: 700, fill: "var(--color-text)" }}>RASPBERRY PI</text>
+          </g>
+
+          {/* Node 2: Security CCTV Camera */}
+          <g className="hardware-node">
+            <rect x="310" y="30" width="120" height="80" rx="6" />
+            {/* Camera Base Stand */}
+            <path d="M362 76h16M370 76v-6" stroke="var(--color-primary)" strokeWidth="1.5" fill="none" />
+            {/* CCTV Camera Main Body */}
+            <path d="M352 53l24-7a2 2 0 0 1 3 1l3 10a2 2 0 0 1-1 3l-24 7a2 2 0 0 1-3-1l-3-10a2 2 0 0 1 1-3z" fill="none" stroke="var(--color-primary)" strokeWidth="1.5" />
+            {/* Camera Lens Circle */}
+            <circle cx="355" cy="60" r="4" fill="var(--color-surface-raised)" stroke="var(--color-primary)" strokeWidth="1.5" />
+            {/* InfraRed LED Dot */}
+            <circle cx="377" cy="51" r="1.5" fill="var(--cyan)" />
+            <text x="370" y="94" textAnchor="middle" style={{ fontSize: "9px", fontWeight: 700, fill: "var(--color-text)" }}>SECURITY CAMERA</text>
+          </g>
+
+          <text className="hardware-label" x="250" y="58" textAnchor="middle" style={{ fontSize: "8px", fill: "var(--color-text-muted)", letterSpacing: "0.08em" }}>TELEMETRY STREAM</text>
+        </svg>
+      </div>
+    </Link>
+  );
 }
