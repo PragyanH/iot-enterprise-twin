@@ -6,14 +6,14 @@ import type { MockDevice } from "@/lib/mockDevices";
 // Map positions pinpointed accurately to each room center box
 const blockPositions: Record<string, { left: string; top: string }> = {
   "PI-001": { left: "20%", top: "31%" },  // A-Block (CCTV) - inside room-a
-  "DEV-002": { left: "45%", top: "31%" }, // B-Block (Water Pump) - inside room-c
-  "DEV-003": { left: "70%", top: "31%" }, // C-Block (Motor Gas Sensor) - inside room-b
-  "DEV-004": { left: "20%", top: "78%" }, // Sardar Vallabhbhai Patel Block (Smart Lock) - inside room-f
-  "DEV-005": { left: "47%", top: "78%" }, // Xerox Shop (Printer) - inside room-e
-  "DEV-006": { left: "68%", top: "78%" }, // Nescafe Outlet (Smoke Detector) - inside room-g
-  "DEV-007": { left: "88%", top: "27%" }, // Central Library (Temp Sensor) - upper right inside room-d
-  "DEV-008": { left: "88%", top: "45%" }, // Central Library (Fire Alarm) - lower right inside room-d
-  "DEV-009": { left: "88%", top: "78%" }, // Main Security Gate (Weather Sensor) - inside room-h
+  "DEV-001": { left: "45%", top: "31%" }, // Alpha (Pump) - inside room-c
+  "DEV-002": { left: "70%", top: "31%" }, // Beta (Assembly Arm) - inside room-b
+  "DEV-003": { left: "20%", top: "78%" }, // Gamma (Grid Node) - inside room-f
+  "DEV-004": { left: "47%", top: "78%" }, // Alpha (Security Camera) - inside room-e
+  "DEV-005": { left: "68%", top: "78%" }, // Nescafe Outlet (Smoke Detector) - inside room-g
+  "DEV-006": { left: "88%", top: "27%" }, // Central Library (Temp Sensor) - upper right inside room-d
+  "DEV-007": { left: "88%", top: "45%" }, // Central Library (Fire Alarm) - lower right inside room-d
+  "DEV-008": { left: "88%", top: "78%" }, // Main Security Gate (Environment Sensor) - inside room-h
 };
 
 export function BuildingMap({ devices }: { devices: MockDevice[] }) {

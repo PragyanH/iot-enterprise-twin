@@ -14,6 +14,6 @@ export const mockDevices: MockDevice[] = [
   device("DEV-006", "Smart Smoke Detector", "Smoke Detector", "Nescafe Outlet", 1, { packetSize: 152, interArrivalTime: 1040, entropy: .25, symmetry: .97 }, { packetSize: .2, interArrivalTime: .25, entropy: .3, symmetry: .15 }),
   device("DEV-007", "Temperature Sensor", "Temperature Sensor", "Central Library", 1, { packetSize: 96, interArrivalTime: 1200, entropy: .31, symmetry: .98 }, { packetSize: .2, interArrivalTime: .3, entropy: .25, symmetry: .15 }),
   device("DEV-008", "Smart Fire Alarm", "Fire Alarm", "Central Library", 2, { packetSize: 144, interArrivalTime: 900, entropy: .22, symmetry: .99 }, { packetSize: .2, interArrivalTime: .25, entropy: .3, symmetry: .12 }),
-  device("DEV-009", "Weather & Environment Sensor", "Air Quality Sensor", "Main Security Gate", 1, { packetSize: 260, interArrivalTime: 420, entropy: .57, symmetry: .81 }, { packetSize: .25, interArrivalTime: .3, entropy: .25, symmetry: .25 })
+  device("DEV-001", "AEGIS Pump 01", "Pressure Sensor", "Alpha", 1, { packetSize: 400, interArrivalTime: 500, entropy: .30, symmetry: .60 }, { packetSize: .25, interArrivalTime: .25, entropy: .2, symmetry: .2 })
 ];
 

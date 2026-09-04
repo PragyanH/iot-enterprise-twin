@@ -54,6 +54,30 @@
       "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
       "baseline": {"packet_size": 0.52, "iat": 0.42, "payload_entropy": 0.66, "flow_symmetry": 0.56},
       "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-005", "name": "Smart Smoke Detector", "sector": "Nescafe Outlet", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.152, "iat": 1.04, "payload_entropy": 0.25, "flow_symmetry": 0.97},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-006", "name": "Temperature Sensor", "sector": "Central Library", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.096, "iat": 1.2, "payload_entropy": 0.31, "flow_symmetry": 0.98},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-007", "name": "Smart Fire Alarm", "sector": "Central Library", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.144, "iat": 0.9, "payload_entropy": 0.22, "flow_symmetry": 0.99},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-008", "name": "Weather & Environment Sensor", "sector": "Main Security Gate", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.26, "iat": 0.42, "payload_entropy": 0.57, "flow_symmetry": 0.81},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
     }
   ]
 }

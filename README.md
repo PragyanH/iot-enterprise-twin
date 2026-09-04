@@ -309,3 +309,5 @@ services\backend\api\.venv\Scripts\python.exe scripts\seed_demo_users.py
 ```
 
 SMTP remains safely disabled with `AEGIS_SMTP_ENABLED=false`. For real delivery, set the host, port, username, password, from-address, and TLS values documented in `.env.example` before starting FastAPI. Assignment and all cyber lifecycle functions continue if SMTP is offline or rejects delivery.
+
+For automatic forensic notifications, copy `.env.example` to `.env`, replace the SMTP placeholders with a newly generated credential, and set `AEGIS_SMTP_ENABLED=true`. Enter the recipient from the small `REPORT EMAIL` control in the dashboard top bar; it is stored by the backend in `data/forensic_recipient.json`, not in `.env`. The backend automatically loads the repository-root `.env` for SMTP settings in direct Uvicorn launches. A PDF forensic report is sent once for each newly created `ATTACK` incident, independently per device and without a cooldown. Mock fleet devices and `PI-001` Raspberry Pi telemetry use the same incident path.

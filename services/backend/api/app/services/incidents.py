@@ -104,12 +104,17 @@ class IncidentService:
         *,
         clock: Callable[[], datetime] = utc_now,
         event_sink: Callable[[str, dict[str, object]], None] | None = None,
+        automatic_report_sender: Callable[[dict[str, object]], None] | None = None,
     ) -> None:
         self.repository = repository
         self.reports_dir = reports_dir
         self.clock = clock
         self.event_sink = event_sink
+        self.automatic_report_sender = automatic_report_sender
         self._lock = threading.RLock()
+
+    def set_automatic_report_sender(self, sender: Callable[[dict[str, object]], None] | None) -> None:
+        self.automatic_report_sender = sender
 
     def _now(self) -> str:
         return self.clock().astimezone(timezone.utc).isoformat()
@@ -201,7 +206,10 @@ class IncidentService:
             self.repository.save(incident)
             self._emit("incident_created", incident, attack_type=attack_type, severity=severity)
             self._emit("forensic_snapshot_captured", incident)
-            return self.generate_report(incident_id)
+            incident = self.generate_report(incident_id)
+            if self.automatic_report_sender:
+                self.automatic_report_sender(incident)
+            return incident
 
     def generate_report(self, incident_id: str) -> dict[str, object]:
         with self._lock:
@@ -450,7 +458,7 @@ class IncidentService:
             "email_attempts": int(incident.get("email_attempts", 0)) + int(result.get("attempted", False)),
             "report_email_status": result["status"],
         })
-        self._timeline(incident, "EMAIL_NOTIFICATION_UPDATED", "Assignment email status updated", f"Email status: {result['status']}.", {"recipient": result.get("recipient"), "error": result.get("error")})
+        self._timeline(incident, "EMAIL_NOTIFICATION_UPDATED", "Email notification status updated", f"Email status: {result['status']}.", {"recipient": result.get("recipient"), "error": result.get("error")})
         self.repository.save(incident)
         self._emit("incident_email_updated", incident, status=result["status"])
         return incident
