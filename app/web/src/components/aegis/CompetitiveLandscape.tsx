@@ -179,12 +179,42 @@ function TrustGraphic() {
 function MarketWedgeGraphic() {
   return (
     <div className="poc-wedge-graphic" aria-label="Aegis positioned for behavioral depth while enterprise platforms provide breadth">
-      <div className="poc-axis-y">ENTERPRISE BREADTH ↑</div>
-      <div className="poc-axis-x">BEHAVIORAL DEPTH →</div>
-      <span className="poc-market-dot armis">ARMIS</span>
-      <span className="poc-market-dot darktrace">DARKTRACE</span>
-      <span className="poc-market-dot nozomi">NOZOMI</span>
-      <strong className="poc-market-dot aegis">AEGIS-TWIN</strong>
+      <div className="wedge-grid-bg">
+        <svg className="wedge-grid-svg" viewBox="0 0 400 220">
+          <line x1="0" y1="110" x2="400" y2="110" stroke="var(--line)" strokeDasharray="4 4" strokeWidth="1" />
+          <line x1="200" y1="0" x2="200" y2="220" stroke="var(--line)" strokeDasharray="4 4" strokeWidth="1" />
+          <line x1="40" y1="180" x2="360" y2="40" stroke="var(--cyan)" strokeWidth="1.5" opacity="0.3" strokeDasharray="6 4" />
+        </svg>
+      </div>
+      <div className="poc-axis-y">
+        <span>ENTERPRISE BREADTH</span>
+        <i>↑</i>
+      </div>
+      <div className="poc-axis-x">
+        <span>BEHAVIORAL DEPTH</span>
+        <i>→</i>
+      </div>
+
+      <div className="wedge-quadrant q-top-left">Enterprise Visibility</div>
+      <div className="wedge-quadrant q-bottom-right">Edge Resilience Wedge</div>
+
+      <div className="poc-market-dot armis">
+        <span className="dot-ping" />
+        <b>ARMIS</b>
+      </div>
+      <div className="poc-market-dot darktrace">
+        <span className="dot-ping" />
+        <b>DARKTRACE</b>
+      </div>
+      <div className="poc-market-dot nozomi">
+        <span className="dot-ping" />
+        <b>NOZOMI</b>
+      </div>
+      <strong className="poc-market-dot aegis">
+        <span className="aegis-pulse-glow" />
+        <span className="dot-tag">THE WEDGE</span>
+        <b>AEGIS-TWIN</b>
+      </strong>
     </div>
   );
 }
@@ -336,39 +366,45 @@ export function CompetitiveLandscape() {
           </div>
 
           <div className="poc-competitor-grid">
-            <article>
+            <article className="competitor-card armis-card">
               <SectionLabel>ARMIS</SectionLabel>
               <h3>Asset intelligence</h3>
               <p>Strong at managed, unmanaged and IoT/OT asset visibility, exposure management, behavioral baselines and enterprise-scale response.</p>
-              <b>WHAT ASSETS EXIST, AND WHERE IS OUR EXPOSURE?</b>
+              <b className="card-question-tag">WHAT ASSETS EXIST, AND WHERE IS OUR EXPOSURE?</b>
             </article>
-            <article>
+            <article className="competitor-card darktrace-card">
               <SectionLabel>DARKTRACE</SectionLabel>
               <h3>Self-learning defense</h3>
               <p>Strong at self-learning behavior, investigation of known and unknown threats, and targeted autonomous response.</p>
-              <b>CAN AI LEARN AND INTERVENE AS THREATS EMERGE?</b>
+              <b className="card-question-tag">CAN AI LEARN AND INTERVENE AS THREATS EMERGE?</b>
             </article>
-            <article>
+            <article className="competitor-card nozomi-card">
               <SectionLabel>NOZOMI</SectionLabel>
               <h3>Industrial visibility</h3>
               <p>Strong at OT/IoT visibility, protocol awareness, behavioral baselines, threat intelligence and operational workflows.</p>
-              <b>HOW DO WE SECURE A LARGE INDUSTRIAL ESTATE?</b>
+              <b className="card-question-tag">HOW DO WE SECURE A LARGE INDUSTRIAL ESTATE?</b>
             </article>
           </div>
 
           <ComparisonTable rows={industryRows} industry />
 
           <div className="poc-depth-grid">
-            <div>
+            <div className="depth-intro-card">
               <SectionLabel>AEGIS OPTIMIZES FOR DEPTH</SectionLabel>
               <h3>One device, fully reasoned</h3>
               <p>PI-001 shows the complete path: evidence, trust, incident, response, and verified recovery.</p>
             </div>
             <div className="poc-device-story">
-              <span>PI-001 · COMPROMISED GATEWAY</span>
-              <b>98 → 64 → 23</b>
-              <small>HEALTHY → SUSPICIOUS → ATTACK</small>
-              <em>Rules HIGH · XGBoost SYN_FLOOD · VAE ANOMALOUS · JSD DRIFT</em>
+              <div className="story-header-row">
+                <span className="story-device-pill">PI-001 · COMPROMISED GATEWAY</span>
+                <span className="story-live-chip">LIVE TRAJECTORY</span>
+              </div>
+              <div className="story-score-row">
+                <b>98 → 64 → 23</b>
+                <span className="score-badge danger">ATTACK STATE</span>
+              </div>
+              <small className="story-labels">HEALTHY → SUSPICIOUS → ATTACK</small>
+              <em className="story-channels">Rules HIGH · XGBoost SYN_FLOOD · VAE ANOMALOUS · JSD DRIFT</em>
             </div>
           </div>
 

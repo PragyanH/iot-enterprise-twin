@@ -3983,4 +3983,300 @@ h2 { font: 600 19px Arial, Helvetica, sans-serif; margin-top: 8px; }
   font-weight: 600;
 }
 
+/* ==========================================
+   INDUSTRY EDGE SPECIFIC STYLES
+   ========================================== */
+
+/* Market Wedge Interactive Graphic */
+.poc-wedge-graphic {
+  position: relative;
+  height: 240px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px var(--color-shadow);
+  margin-top: 10px;
+}
+
+.wedge-grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.wedge-grid-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.poc-axis-y {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  z-index: 3;
+}
+
+.poc-axis-x {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  z-index: 3;
+}
+
+.wedge-quadrant {
+  position: absolute;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.wedge-quadrant.q-top-left { top: 35px; left: 24px; }
+.wedge-quadrant.q-bottom-right { bottom: 35px; right: 24px; color: var(--cyan); opacity: 0.6; }
+
+.poc-market-dot {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transition: all 0.25s ease;
+  z-index: 4;
+}
+
+.poc-market-dot:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 16px var(--color-shadow);
+  border-color: var(--cyan);
+}
+
+.poc-market-dot b {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+.poc-market-dot .dot-ping {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.poc-market-dot.armis { top: 60px; left: 110px; }
+.poc-market-dot.darktrace { top: 100px; left: 200px; }
+.poc-market-dot.nozomi { top: 50px; left: 270px; }
+
+.poc-market-dot.aegis {
+  bottom: 40px;
+  right: 110px;
+  background: color-mix(in srgb, var(--cyan) 12%, var(--color-surface));
+  border: 2px solid var(--cyan);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--cyan) 30%, transparent);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 14px;
+}
+
+.poc-market-dot.aegis b {
+  font-size: 12px;
+  color: var(--cyan);
+}
+
+.poc-market-dot.aegis .dot-tag {
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--color-on-primary);
+  background: var(--cyan);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* Competitor Grid Cards */
+.poc-competitor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.competitor-card {
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 4px 12px var(--color-shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.competitor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--color-shadow);
+  border-top-color: var(--cyan);
+}
+
+.competitor-card h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 2px 0 0;
+}
+
+.competitor-card p {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.card-question-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 8%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--cyan) 25%, transparent);
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Depth Grid & Device Story */
+.poc-depth-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 22px;
+  margin-top: 24px;
+  box-shadow: 0 4px 16px var(--color-shadow);
+}
+
+.depth-intro-card h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 4px 0;
+}
+
+.depth-intro-card p {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin: 0;
+}
+
+.poc-device-story {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--red);
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.story-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.story-device-pill {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  font-family: monospace;
+}
+
+.story-live-chip {
+  font-size: 7.5px;
+  font-weight: 800;
+  color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 12%, transparent);
+  border: 1px solid var(--cyan);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.story-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 2px 0;
+}
+
+.story-score-row b {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--red);
+  font-family: monospace;
+  letter-spacing: -0.02em;
+}
+
+.score-badge.danger {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: var(--color-on-primary);
+  background: var(--red);
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+}
+
+.story-labels {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.story-channels {
+  font-style: normal;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 8%, var(--color-surface));
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px stroke color-mix(in srgb, var(--red) 20%, transparent);
+}
+
 
