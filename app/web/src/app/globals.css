@@ -111,21 +111,245 @@ h2 { font: 600 19px Arial, Helvetica, sans-serif; margin-top: 8px; }
 .map-panel, .device-list, .meter-panel, .stream, .history, .controls { padding: 22px; }
 .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
 .floor-tabs { display: flex; gap: 14px; color: var(--muted); font-size: 9px; letter-spacing: .08em; } .floor-tabs .active { color: var(--cyan); }
-.floor-plan { height: 570px; position: relative; overflow: hidden; background: var(--color-surface-raised); border: 1px solid var(--line); }
-.room-grid { position: absolute; inset: 12% 8%; border: 1px solid var(--color-border-strong); }
-.room { position: absolute; border: 1px solid var(--color-border-strong); color: var(--muted); font-size: 9px; padding: 10px; letter-spacing: .08em; }
-.room-a { left: 0; top: 0; width: 25%; height: 38%; } .room-b { right: 0; top: 0; width: 25%; height: 38%; } .room-c { left: 25%; top: 0; width: 25%; height: 38%; } .room-d { right: 0; top: 38%; width: 25%; height: 25%; } .room-e { left: 25%; bottom: 0; width: 30%; height: 37%; } .room-f { left: 0; bottom: 0; width: 25%; height: 37%; } .room-g { right: 25%; bottom: 0; width: 20%; height: 37%; } .room-h { right: 0; bottom: 0; width: 25%; height: 37%; }
-.hallway-line { position: absolute; left: 0; right: 0; top: 38%; height: 25%; border-top: 1px solid var(--color-border-strong); border-bottom: 1px solid var(--color-border-strong); }
-.floor-label { position: absolute; color: var(--muted); font-size: 9px; letter-spacing: .15em; left: 16px; } .floor-one { top: 5%; } .floor-two { bottom: 5%; }
-.map-marker { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 2; }
-.map-dot { display: block; width: 11px; height: 11px; border-radius: 50%; background: var(--green); border: 2px solid var(--color-surface); box-shadow: 0 0 0 1px var(--green), 0 2px 6px var(--color-shadow); }
-.map-marker b { font-size: 9px; font-weight: 600; color: var(--ink); } .marker-warning .map-dot { background: var(--amber); box-shadow: 0 0 0 1px var(--amber), 0 2px 6px var(--color-shadow); } .marker-compromised .map-dot { background: var(--orange); box-shadow: 0 0 0 1px var(--orange), 0 2px 6px var(--color-shadow); } .marker-critical .map-dot { background: var(--red); box-shadow: 0 0 0 1px var(--red), 0 2px 6px var(--color-shadow); animation: pulse 1.7s infinite; }
-.map-tooltip { position: absolute; left: 50%; bottom: calc(100% + 12px); width: 190px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; background: var(--color-surface); border: 1px solid var(--color-border-strong); box-shadow: 0 8px 20px var(--color-shadow); color: var(--ink); opacity: 0; pointer-events: none; transform: translate(-50%, 4px); transition: opacity .16s ease, transform .16s ease; text-align: left; }
-.map-tooltip::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 8px; height: 8px; background: var(--color-surface); border-right: 1px solid var(--color-border-strong); border-bottom: 1px solid var(--color-border-strong); transform: translateX(-50%) rotate(45deg); }
-.map-tooltip strong { font-size: 11px; font-weight: 700; } .map-tooltip small { color: var(--muted); font-size: 9px; } .map-tooltip em { color: var(--green); font-size: 9px; font-style: normal; font-weight: 700; letter-spacing: .08em; } .marker-warning .map-tooltip em { color: var(--amber); } .marker-compromised .map-tooltip em { color: var(--orange); } .marker-critical .map-tooltip em { color: var(--red); }
-.map-marker:hover .map-tooltip, .map-marker:focus-visible .map-tooltip { opacity: 1; transform: translate(-50%, 0); }
-.map-legend { position: absolute; bottom: 15px; left: 18px; display: flex; gap: 16px; color: var(--muted); font-size: 9px; } .map-legend span { display: flex; gap: 6px; align-items: center; }
-.legend-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); } .legend-dot.warning { background: var(--amber); } .legend-dot.critical { background: var(--red); }
+/* Master Architectural Blueprint Map Styles */
+.blueprint-map-container {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.nhce-blueprint-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.building-group {
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.building-group:hover {
+  transform: translateY(-1px);
+}
+
+/* Interactive Blueprint Pins */
+.blueprint-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.blueprint-pin:hover {
+  transform: translate(-50%, -54%) scale(1.1);
+  z-index: 20;
+}
+
+.pin-head {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 2px solid var(--cyan);
+  box-shadow: 0 4px 14px var(--color-shadow), 0 0 10px color-mix(in srgb, var(--cyan) 30%, transparent);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+}
+
+.pin-tag {
+  margin-top: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  padding: 2px 6px;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px var(--color-shadow);
+}
+
+.pin-tag b {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+.pin-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--cyan);
+  opacity: 0;
+  animation: pin-wave 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+/* Status Specific Pin Glows */
+.pin-status-healthy .pin-head { border-color: var(--green); }
+.pin-status-healthy .pin-pulse { border-color: var(--green); }
+
+.pin-status-warning .pin-head { border-color: var(--amber); }
+.pin-status-warning .pin-pulse { border-color: var(--amber); }
+
+.pin-status-critical .pin-head {
+  border-color: var(--red);
+  background: color-mix(in srgb, var(--red) 15%, var(--color-surface));
+}
+
+.pin-status-critical .pin-pulse {
+  border-color: var(--red);
+  animation: pin-wave 0.8s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+@keyframes pin-wave {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Rich Blueprint Tooltip */
+.blueprint-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  width: 220px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: var(--color-surface);
+  border: 1px solid var(--cyan);
+  box-shadow: 0 12px 30px var(--color-shadow), 0 0 16px color-mix(in srgb, var(--cyan) 20%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+  z-index: 30;
+}
+
+.blueprint-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--cyan);
+  border-bottom: 1px solid var(--cyan);
+}
+
+.blueprint-pin:hover .blueprint-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip-id {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.tooltip-badge {
+  font-size: 8px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.badge-healthy { background: color-mix(in srgb, var(--green) 15%, transparent); color: var(--green); }
+.badge-warning { background: color-mix(in srgb, var(--amber) 15%, transparent); color: var(--amber); }
+.badge-critical { background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red); }
+
+.blueprint-tooltip strong {
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.tooltip-location {
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.tooltip-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.tooltip-meta b {
+  color: var(--ink);
+}
+
+.tooltip-cta {
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--cyan);
+  letter-spacing: 0.06em;
+  margin-top: 4px;
+}
+
+/* Blueprint Map Legend */
+.blueprint-map-legend {
+  position: absolute;
+  bottom: 14px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.leg-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.leg-healthy { background: var(--green); }
+.leg-warning { background: var(--amber); }
+.leg-critical { background: var(--red); }
+
+.leg-line-bus {
+  width: 14px;
+  height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+}
 .device-list { min-height: 0; } .live-chip { font-size: 9px; color: var(--green); display: flex; gap: 7px; align-items: center; letter-spacing: .1em; }
 .device-list-scroll { max-height: 520px; overflow: auto; } .device-row { display: flex; align-items: center; gap: 11px; padding: 14px 2px; border-bottom: 1px solid var(--line); transition: background .2s; } .device-row:hover { background: var(--color-surface-raised); }
 .device-glyph { width: 29px; height: 29px; display: grid; place-items: center; border: 1px solid var(--color-border-strong); color: var(--cyan); font-size: 17px; } .device-row-copy { flex: 1; min-width: 0; } .device-row-copy strong { display: block; font-size: 11px; } .device-row-copy small { display: block; color: var(--muted); font-size: 9px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
