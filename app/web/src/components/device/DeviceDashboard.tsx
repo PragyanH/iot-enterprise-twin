@@ -19,11 +19,71 @@ function ParameterControls({ device, onChange, onAttack, onReset }: { device: Mo
 
 function PacketStream({ device }: { device: MockDevice }) {
   const [packets, setPackets] = useState<Array<{ time: string; metrics: MockDevice["current"]; anomalous: boolean }>>([]);
+
   useEffect(() => {
-    const add = () => setPackets((items) => [{ time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }), metrics: device.current, anomalous: device.status !== "healthy" }, ...items].slice(0, 8));
-    add(); const timer = window.setInterval(add, 1600); return () => window.clearInterval(timer);
+    const add = () => {
+      const isAttacking = device.status !== "healthy";
+      // Generate realistic dynamic variations for mock stream
+      const sizeNoise = (Math.random() - 0.5) * (isAttacking ? 120 : 18);
+      const gapNoise = (Math.random() - 0.5) * (isAttacking ? 60 : 14);
+      const entropyNoise = (Math.random() - 0.5) * 0.04;
+      const symmetryNoise = (Math.random() - 0.5) * 0.04;
+
+      const dynamicMetrics: MockDevice["current"] = {
+        packetSize: Math.max(64, device.current.packetSize + sizeNoise),
+        interArrivalTime: Math.max(10, device.current.interArrivalTime + gapNoise),
+        entropy: Math.min(1.0, Math.max(0.0, device.current.entropy + entropyNoise)),
+        symmetry: Math.min(1.0, Math.max(0.0, device.current.symmetry + symmetryNoise)),
+      };
+
+      setPackets((items) => [
+        {
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+          metrics: dynamicMetrics,
+          anomalous: isAttacking,
+        },
+        ...items,
+      ].slice(0, 8));
+    };
+
+    add();
+    const timer = window.setInterval(add, 1600);
+    return () => window.clearInterval(timer);
   }, [device]);
-  return <section className="stream panel"><div className="panel-heading"><div><span className="eyebrow">Network observability</span><h2>Live telemetry stream</h2></div><span className="live-chip"><i /> STREAMING</span></div><div className="stream-table"><div className="stream-row stream-head"><span>Timestamp</span><span>Size</span><span>Gap</span><span>Entropy</span><span>Symmetry</span><span>State</span></div>{packets.map((packet, index) => <div className="stream-row" key={`${packet.time}-${index}`}><span>{packet.time}</span><span>{Math.round(packet.metrics.packetSize)} B</span><span>{Math.round(packet.metrics.interArrivalTime)} ms</span><span>{packet.metrics.entropy.toFixed(2)}</span><span>{packet.metrics.symmetry.toFixed(2)}</span><span className={packet.anomalous ? "packet-alert" : "packet-ok"}>{packet.anomalous ? "ANOMALOUS" : "NORMAL"}</span></div>)}</div></section>;
+
+  return (
+    <section className="stream panel">
+      <div className="panel-heading">
+        <div>
+          <span className="eyebrow">Network observability</span>
+          <h2>Live telemetry stream</h2>
+        </div>
+        <span className="live-chip"><i /> STREAMING</span>
+      </div>
+      <div className="stream-table">
+        <div className="stream-row stream-head">
+          <span>Timestamp</span>
+          <span>Size</span>
+          <span>Gap</span>
+          <span>Entropy</span>
+          <span>Symmetry</span>
+          <span>State</span>
+        </div>
+        {packets.map((packet, index) => (
+          <div className="stream-row" key={`${packet.time}-${index}`}>
+            <span>{packet.time}</span>
+            <span>{Math.round(packet.metrics.packetSize)} B</span>
+            <span>{Math.round(packet.metrics.interArrivalTime)} ms</span>
+            <span>{packet.metrics.entropy.toFixed(2)}</span>
+            <span>{packet.metrics.symmetry.toFixed(2)}</span>
+            <span className={packet.anomalous ? "packet-alert" : "packet-ok"}>
+              {packet.anomalous ? "ANOMALOUS" : "NORMAL"}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function SecurityHistory({ points }: { points: Array<{ time: string; trust: number; anomaly: number }> }) {

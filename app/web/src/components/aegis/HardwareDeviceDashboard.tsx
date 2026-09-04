@@ -287,9 +287,9 @@ export function HardwareDeviceDashboard() {
         <div className="device-header">
           <div>
             <span className="eyebrow">
-              {device.sourceMode?.replaceAll("_", " ")} · PI-001
+              A-BLOCK · PI-001
             </span>
-            <h1>{device.name}</h1>
+            <h1>Raspberry Pi (CCTV)</h1>
             <p>{device.sensor} · Real-time hybrid packet telemetry &amp; live behavioral stream</p>
           </div>
           <DeviceStatus status={effectiveStatus} />

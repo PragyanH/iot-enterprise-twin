@@ -9,7 +9,18 @@ type HistoryPoint = { time: string; trust: number; anomaly: number };
 type DeviceContextValue = { devices: MockDevice[]; histories: Record<string, HistoryPoint[]>; connected: boolean; error: string | null; refresh: () => Promise<void>; updateMetric: (id: string, key: MetricKey, value: number) => void; attack: (id: string) => void; reset: (id: string) => void };
 const DeviceContext = createContext<DeviceContextValue | null>(null);
 const thresholds: TrafficMetrics = { packetSize: .25, interArrivalTime: .3, entropy: .25, symmetry: .25 };
-const typeFor = (item: FleetDeviceResponse): DeviceType => item.source === "pi" || item.name.toLowerCase().includes("camera") ? "Camera" : item.name.toLowerCase().includes("pump") ? "Pressure Sensor" : "Motion Sensor";
+const typeFor = (item: FleetDeviceResponse): DeviceType => {
+  const name = item.name.toLowerCase();
+  if (item.source === "pi" || name.includes("camera")) return "Camera";
+  if (name.includes("pump")) return "Pressure Sensor";
+  if (name.includes("gas") || name.includes("weather")) return "Air Quality Sensor";
+  if (name.includes("lock")) return "Smart Lock";
+  if (name.includes("printer")) return "Door Sensor";
+  if (name.includes("smoke")) return "Smoke Detector";
+  if (name.includes("temperature")) return "Temperature Sensor";
+  if (name.includes("fire")) return "Fire Alarm";
+  return "Motion Sensor";
+};
 const statusFor = (state: string): DeviceStatus => state === "ATTACK" ? "critical" : state === "HEALTHY" ? "healthy" : state === "SUSPICIOUS" ? "compromised" : "warning";
 const trafficFrom = (features: Record<string, number>): TrafficMetrics => {
   const packetSize = Number(features.packet_size ?? 0);

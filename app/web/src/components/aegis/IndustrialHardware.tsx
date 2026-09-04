@@ -10,12 +10,12 @@ export function IndustrialHardware() {
   return (
     <Link href="/dashboard/hardware/pi-001" className="industrial-hardware panel">
       <div className="hardware-copy">
-        <span className="eyebrow">{pi?.sourceMode?.replaceAll("_", " ") ?? "hardware awaiting telemetry"} · PI-001</span>
-        <h2>{pi?.name ?? "Raspberry Pi security camera"}</h2>
+        <span className="eyebrow">A-BLOCK · PI-001 · CCTV CAMERA</span>
+        <h2>Raspberry Pi (CCTV)</h2>
         <p>
-          Trust {pi?.trustScore ?? "--"}/100 · {(pi?.backendState?.state ?? "BOOTSTRAP").replaceAll("_", " ")} · {pi?.sensor ?? "sensor awaiting telemetry"}. Open the device to inspect live hybrid evidence and remediation.
+          Trust {pi?.trustScore ?? "--"}/100 · {(pi?.backendState?.state ?? "BOOTSTRAP").replaceAll("_", " ")} · {pi?.sensor ?? "sensor awaiting telemetry"}. Open A-Block device to inspect live hybrid evidence and remediation.
         </p>
-        <span className="hardware-cta">OPEN PI-001 DEVICE DASHBOARD →</span>
+        <span className="hardware-cta">OPEN A-BLOCK PI-001 DASHBOARD →</span>
       </div>
 
       <div className="hardware-diagram" aria-label="Raspberry Pi security camera connection">
