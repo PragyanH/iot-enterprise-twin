@@ -3,8 +3,8 @@
   "devices": [
     {
       "device_id": "PI-001",
-      "name": "AEGIS Raspberry Pi",
-      "sector": "Hardware Lab",
+      "name": "CCTV Camera",
+      "sector": "A-Block",
       "source": "pi",
       "feature_names": [
         "packet_size", "iat", "flow_symmetry", "syn_rate", "syn_ack_rate", "ack_rate",
@@ -32,27 +32,51 @@
       }
     },
     {
-      "device_id": "DEV-001", "name": "AEGIS Pump 01", "sector": "Alpha", "source": "mock",
-      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
-      "baseline": {"packet_size": 0.4, "iat": 0.5, "payload_entropy": 0.3, "flow_symmetry": 0.6},
-      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
-    },
-    {
-      "device_id": "DEV-002", "name": "Assembly Arm", "sector": "Beta", "source": "mock",
+      "device_id": "DEV-002", "name": "Industrial Water Pump", "sector": "B-Block", "source": "mock",
       "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
       "baseline": {"packet_size": 0.6, "iat": 0.3, "payload_entropy": 0.7, "flow_symmetry": 0.5},
       "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
     },
     {
-      "device_id": "DEV-003", "name": "Grid Node 0X", "sector": "Gamma", "source": "mock",
+      "device_id": "DEV-003", "name": "Motor Gas Sensor", "sector": "C-Block", "source": "mock",
       "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
       "baseline": {"packet_size": 0.35, "iat": 0.62, "payload_entropy": 0.45, "flow_symmetry": 0.7},
       "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
     },
     {
-      "device_id": "DEV-004", "name": "Security Camera", "sector": "Alpha", "source": "mock",
+      "device_id": "DEV-004", "name": "Smart Door Lock", "sector": "SVP Block", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.31, "iat": 0.18, "payload_entropy": 0.63, "flow_symmetry": 0.72},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-005", "name": "IoT Enterprise Printer", "sector": "Xerox Shop", "source": "mock",
       "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
       "baseline": {"packet_size": 0.52, "iat": 0.42, "payload_entropy": 0.66, "flow_symmetry": 0.56},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-006", "name": "Smart Smoke Detector", "sector": "Nescafe Outlet", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.15, "iat": 1.04, "payload_entropy": 0.25, "flow_symmetry": 0.97},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-007", "name": "Temperature Sensor", "sector": "Central Library", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.10, "iat": 1.20, "payload_entropy": 0.31, "flow_symmetry": 0.98},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-008", "name": "Smart Fire Alarm", "sector": "Central Library", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.14, "iat": 0.90, "payload_entropy": 0.22, "flow_symmetry": 0.99},
+      "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
+    },
+    {
+      "device_id": "DEV-009", "name": "Weather & Environment Sensor", "sector": "Security Gate", "source": "mock",
+      "feature_names": ["packet_size", "iat", "payload_entropy", "flow_symmetry"],
+      "baseline": {"packet_size": 0.26, "iat": 0.42, "payload_entropy": 0.57, "flow_symmetry": 0.81},
       "deviation": {"packet_size": 0.035, "iat": 0.035, "payload_entropy": 0.035, "flow_symmetry": 0.035}
     }
   ]

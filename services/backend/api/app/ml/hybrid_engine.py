@@ -126,8 +126,8 @@ def _mock_profile(
 DEFAULT_PROFILES: dict[str, DeviceProfile] = {
     "PI-001": DeviceProfile(
         device_id="PI-001",
-        name="AEGIS Raspberry Pi",
-        sector="Hardware Lab",
+        name="CCTV Camera",
+        sector="A-Block",
         source="pi",
         baseline={
             "packet_size": 420.0,
@@ -169,10 +169,14 @@ DEFAULT_PROFILES: dict[str, DeviceProfile] = {
         },
         feature_names=PI_FEATURES,
     ),
-    "DEV-001": _mock_profile("DEV-001", "AEGIS Pump 01", "Alpha", (0.40, 0.50, 0.30, 0.60)),
-    "DEV-002": _mock_profile("DEV-002", "Assembly Arm", "Beta", (0.60, 0.30, 0.70, 0.50)),
-    "DEV-003": _mock_profile("DEV-003", "Grid Node 0X", "Gamma", (0.35, 0.62, 0.45, 0.70)),
-    "DEV-004": _mock_profile("DEV-004", "Security Camera", "Alpha", (0.52, 0.42, 0.66, 0.56)),
+    "DEV-002": _mock_profile("DEV-002", "Industrial Water Pump", "B-Block", (0.60, 0.30, 0.70, 0.50)),
+    "DEV-003": _mock_profile("DEV-003", "Motor Gas Sensor", "C-Block", (0.35, 0.62, 0.45, 0.70)),
+    "DEV-004": _mock_profile("DEV-004", "Smart Door Lock", "SVP Block", (0.31, 0.18, 0.63, 0.72)),
+    "DEV-005": _mock_profile("DEV-005", "IoT Enterprise Printer", "Xerox Shop", (0.52, 0.42, 0.66, 0.56)),
+    "DEV-006": _mock_profile("DEV-006", "Smart Smoke Detector", "Nescafe Outlet", (0.15, 1.04, 0.25, 0.97)),
+    "DEV-007": _mock_profile("DEV-007", "Temperature Sensor", "Central Library", (0.10, 1.20, 0.31, 0.98)),
+    "DEV-008": _mock_profile("DEV-008", "Smart Fire Alarm", "Central Library", (0.14, 0.90, 0.22, 0.99)),
+    "DEV-009": _mock_profile("DEV-009", "Weather & Environment Sensor", "Security Gate", (0.26, 0.42, 0.57, 0.81)),
 }
 
 
