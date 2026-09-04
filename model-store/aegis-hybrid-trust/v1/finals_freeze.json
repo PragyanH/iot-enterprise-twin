@@ -1,0 +1,16 @@
+{
+  "frozen_at_utc": "2026-09-04T07:08:18.034054+00:00",
+  "backup": "C:\\Users\\pragy\\OneDrive\\Desktop\\SH-aegis-twin\\model-store\\aegis-hybrid-trust\\v1-pre-step4b-20260904T070812Z",
+  "dataset_sha256": "6904672eb4dff2a500b37832f92c872732544051c8fc1566be2d646d21a7af69",
+  "artifact_sha256": {
+    "baselines.json": "7ec4a627bb5788a6855287ddb045d4d920337282f9eded05716217e07d6cef0b",
+    "calibration.json": "df9252c42a28149f35d786bd429d5239f4d354ad7122eb6b7b81adeaaa02fb73",
+    "temporal_vae_pi.pt": "6ee9582fafa356fe2cf246d43834e940a2875b47be8382211f4700b1b6173059",
+    "temporal_vae_mock.pt": "c847c55af9c7a3b8bfb7e2941a8e1cdd3bcfdbae619008d1a880b3bae6f8c43c",
+    "xgboost.json": "19c1313e8a0e80be5cf5db6465a702c3d2bf285d35fe70b8b1bf1fedaa508904",
+    "metrics.json": "25afd93c18894e4dc75328156d28596a378cfb904d9384828a249fa11adc2434",
+    "manifest.json": "d1303c64ffa1b3e252cdc3ed839e4640534919ac2576434b7a5dad05488d9b45",
+    "canonicalization.json": "ecfa106d15bd3994db2e3b2eb0dff56d068c2ce707e2c498ab4291d8395f1f66",
+    "intelligence.json": "79e952e268d3c8feba4ea19a29971365b5098b40192dbf1a1357bcfb055e69ef"
+  }
+}

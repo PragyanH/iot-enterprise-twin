@@ -1,0 +1,88 @@
+{
+  "capture_date": "",
+  "host": "LAPTOP-80JTTHKT",
+  "device_id": "PI-001",
+  "pi_ip": "192.168.56.20",
+  "tshark_interface": "9",
+  "sensor": "tshark_npcap",
+  "sample_interval_seconds": 1.0,
+  "sequence_length": 20,
+  "sessions": [
+    {
+      "session_id": "pi-20260903T230952Z-30b4e245",
+      "label": "normal",
+      "scenario": "finals-normal-01",
+      "windows": 11
+    },
+    {
+      "session_id": "pi-20260903T231106Z-2241fead",
+      "label": "normal",
+      "scenario": "finals-normal-02",
+      "windows": 11
+    },
+    {
+      "session_id": "pi-20260903T231220Z-6accffa9",
+      "label": "normal",
+      "scenario": "finals-normal-03",
+      "windows": 11
+    },
+    {
+      "session_id": "pi-20260903T231332Z-5d24f4b2",
+      "label": "normal",
+      "scenario": "finals-normal-04",
+      "windows": 11
+    },
+    {
+      "session_id": "pi-20260903T231446Z-a127cd97",
+      "label": "normal",
+      "scenario": "finals-normal-05",
+      "windows": 11
+    },
+    {
+      "session_id": "pi-20260903T231558Z-51c08190",
+      "label": "normal",
+      "scenario": "finals-normal-06",
+      "windows": 11
+    },
+    {
+      "session_id": "pi-20260904T063641Z-bcee9283",
+      "label": "syn_flood",
+      "scenario": "finals-syn-01",
+      "windows": 3
+    },
+    {
+      "session_id": "pi-20260904T064159Z-5fa18e7d",
+      "label": "syn_flood",
+      "scenario": "finals-syn-02",
+      "windows": 3
+    },
+    {
+      "session_id": "pi-20260904T064737Z-875b9e39",
+      "label": "syn_flood",
+      "scenario": "finals-syn-03",
+      "windows": 3
+    },
+    {
+      "session_id": "pi-20260904T065210Z-99c027f9",
+      "label": "syn_flood",
+      "scenario": "finals-syn-04",
+      "windows": 3
+    },
+    {
+      "session_id": "pi-20260904T065302Z-2e6d4041",
+      "label": "syn_flood",
+      "scenario": "finals-syn-05",
+      "windows": 3
+    },
+    {
+      "session_id": "pi-20260904T065354Z-be077567",
+      "label": "syn_flood",
+      "scenario": "finals-syn-06",
+      "windows": 3
+    }
+  ],
+  "vm_attack_rate": "",
+  "attack_port": "",
+  "attack_job_id": "pi-syn-demo",
+  "notes": ""
+}

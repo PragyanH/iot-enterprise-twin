@@ -1,0 +1,15 @@
+{
+  "accuracy": 1.0,
+  "macro_f1": 1.0,
+  "syn_flood_recall": 1.0,
+  "held_out_sessions": 6,
+  "train_windows": 720,
+  "test_windows": 240,
+  "status": "trained",
+  "source": "synthetic-demo",
+  "training_epochs": 8,
+  "demo_scenario_success_rate": 100.0,
+  "demo_loops": 20,
+  "demo_loops_passed": 20,
+  "metric_scope": "controlled synthetic and replay scenarios; not a production generalization claim"
+}

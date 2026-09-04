@@ -2,14 +2,40 @@
   "accuracy": 1.0,
   "macro_f1": 1.0,
   "syn_flood_recall": 1.0,
-  "held_out_sessions": 6,
-  "train_windows": 720,
-  "test_windows": 240,
+  "per_class_recall": {
+    "normal": 1.0,
+    "syn_flood": 1.0,
+    "port_scan": 1.0,
+    "ssh_bruteforce": 1.0
+  },
+  "held_out_sessions": {
+    "normal": "pi-20260903T231558Z-51c08190",
+    "syn_flood": "pi-20260904T065354Z-be077567",
+    "port_scan": "synthetic-port_scan-5",
+    "ssh_bruteforce": "synthetic-ssh_bruteforce-5"
+  },
+  "train_windows": 470,
+  "test_windows": 94,
   "status": "trained",
-  "source": "synthetic-demo",
-  "training_epochs": 8,
-  "demo_scenario_success_rate": 100.0,
-  "demo_loops": 20,
-  "demo_loops_passed": 20,
-  "metric_scope": "controlled synthetic and replay scenarios; not a production generalization claim"
+  "source": "real PI-001 live_hardware normal/SYN + controlled synthetic secondary classes",
+  "training_epochs": 30,
+  "physical_sessions": {
+    "normal": 6,
+    "syn_flood": 6
+  },
+  "physical_windows": {
+    "normal": 66,
+    "syn_flood": 18
+  },
+  "pi_vae": {
+    "method": "normal-only, held-out physical session",
+    "held_out_session": "pi-20260903T231558Z-51c08190",
+    "train_sessions": 5,
+    "train_windows": 55,
+    "calibration_windows": 11,
+    "clean_q995_error": 0.491746723651886,
+    "threshold": 2.45873361825943
+  },
+  "dataset_sha256": "6904672eb4dff2a500b37832f92c872732544051c8fc1566be2d646d21a7af69",
+  "metric_scope": "session-held-out finals calibration; physical metrics cover PI-001 normal/SYN"
 }

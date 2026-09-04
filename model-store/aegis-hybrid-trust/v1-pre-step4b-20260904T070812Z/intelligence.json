@@ -1,0 +1,34 @@
+{
+  "version": "aegis-intelligence-v1",
+  "classifier": {
+    "known_min_probability": 0.70,
+    "known_min_margin": 0.20,
+    "normal_min_probability": 0.55,
+    "normal_min_margin": 0.10,
+    "supporting_evidence_min": 0.35
+  },
+  "unknown_anomaly": {
+    "weights": {
+      "temporal": 0.40,
+      "jsd": 0.25,
+      "baseline": 0.35
+    },
+    "attack_threshold": 0.72,
+    "suspicious_threshold": 0.45
+  },
+  "trust_profiles": {
+    "pi": {
+      "rule": 0.50,
+      "classifier": 0.30,
+      "vae": 0.15,
+      "jsd": 0.05
+    },
+    "mock": {
+      "baseline": 0.45,
+      "vae": 0.35,
+      "jsd": 0.20
+    }
+  },
+  "calibration_scope": "deterministic normal, known-attack replay, mock attack, and deliberately unseen behavioral sequences",
+  "metric_claim": "decision thresholds are controlled-scenario calibration values, not universal generalization metrics"
+}

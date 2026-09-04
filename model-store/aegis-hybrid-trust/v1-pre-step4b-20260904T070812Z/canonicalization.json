@@ -1,0 +1,12 @@
+{
+  "version": "aegis-canonicalization-v1",
+  "description": "Transparent severe-SYN buckets calibrated for the controlled Windows/VM/Pi lab. Raw measurements remain in every prediction.",
+  "severe_syn": {
+    "syn_rate_min": 100.0,
+    "incomplete_ratio_min": 0.75,
+    "handshake_completion_ratio_max": 0.25,
+    "syn_rate_value": 250.0,
+    "incomplete_ratio_value": 0.95,
+    "handshake_completion_ratio_value": 0.05
+  }
+}

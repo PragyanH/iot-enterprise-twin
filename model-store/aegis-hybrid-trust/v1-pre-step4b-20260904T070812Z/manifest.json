@@ -24,14 +24,7 @@
       "jsd": 0.2
     }
   },
-  "states": [
-    "BOOTSTRAP",
-    "HEALTHY",
-    "SUSPICIOUS",
-    "ATTACK",
-    "RECOVERING",
-    "STALE"
-  ],
+  "states": ["BOOTSTRAP", "HEALTHY", "SUSPICIOUS", "ATTACK", "RECOVERING", "STALE"],
   "artifacts": {
     "baselines": "baselines.json",
     "vae_pi": "temporal_vae_pi.pt",
@@ -49,24 +42,5 @@
     "intelligence_version": "aegis-intelligence-v1",
     "mitre_scenarios_version": "aegis-mitre-scenarios-v1"
   },
-  "notes": "The deterministic calibrated fallback remains active when optional learned checkpoints have not yet been trained.",
-  "finals_calibration": {
-    "trained_at_utc": "2026-09-04T07:08:18.029306+00:00",
-    "dataset": "data/finals-capture/pi_sessions.jsonl",
-    "dataset_sha256": "6904672eb4dff2a500b37832f92c872732544051c8fc1566be2d646d21a7af69",
-    "physical_sessions": {
-      "normal": 6,
-      "syn_flood": 6
-    },
-    "split": "label-stratified session holdout",
-    "pi_vae_normal_only": true,
-    "xgboost_physical_classes": [
-      "normal",
-      "syn_flood"
-    ],
-    "xgboost_controlled_secondary_classes": [
-      "port_scan",
-      "ssh_bruteforce"
-    ]
-  }
+  "notes": "The deterministic calibrated fallback remains active when optional learned checkpoints have not yet been trained."
 }

@@ -1,6 +1,15 @@
 {
   "vae_thresholds": {
-    "pi": 0.1437956690788269,
+    "pi": 2.45873361825943,
     "mock": 0.18765679001808167
+  },
+  "pi_physical_calibration": {
+    "method": "normal-only, held-out physical session",
+    "held_out_session": "pi-20260903T231558Z-51c08190",
+    "train_sessions": 5,
+    "train_windows": 55,
+    "calibration_windows": 11,
+    "clean_q995_error": 0.491746723651886,
+    "threshold": 2.45873361825943
   }
 }
