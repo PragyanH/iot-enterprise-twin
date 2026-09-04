@@ -47,7 +47,7 @@ function SemicircleSpeedometer({ score, status }: { score: number; status: MockD
   );
 }
 
-// 2. 5-Dimensional Telemetry Vector Radar Chart Component (Enlarged Pentagonal Radar)
+// 2. 5-Dimensional Telemetry Vector Radar Chart Component with 360° Rotating Sweep Cone
 function RadarTelemetryChart({
   synNorm,
   iatNorm,
@@ -66,8 +66,14 @@ function RadarTelemetryChart({
   const center = 140;
   const maxR = 105;
 
-  // 5 Radar Axes Angles (-90deg top, 72deg step)
-  const angles = [-Math.PI / 2, -Math.PI / 2 + (2 * Math.PI) / 5, -Math.PI / 2 + (4 * Math.PI) / 5, -Math.PI / 2 + (6 * Math.PI) / 5, -Math.PI / 2 + (8 * Math.PI) / 5];
+  // 5 Radar Axes Angles (-90deg, -18deg, 54deg, 126deg, 198deg)
+  const angles = [
+    -Math.PI / 2,
+    -Math.PI / 2 + (2 * Math.PI) / 5,
+    -Math.PI / 2 + (4 * Math.PI) / 5,
+    -Math.PI / 2 + (6 * Math.PI) / 5,
+    -Math.PI / 2 + (8 * Math.PI) / 5,
+  ];
 
   const values = [synNorm, iatNorm, entropyNorm, symNorm, vaeNorm];
 
@@ -81,37 +87,36 @@ function RadarTelemetryChart({
     .join(" ");
 
   const axisLabels = [
-    { name: "SYN RATE", val: `${(synNorm * 300).toFixed(0)}/s`, top: "4px", left: "50%", transform: "translateX(-50%)" },
-    { name: "IAT GAP", val: `${(iatNorm * 400).toFixed(0)}ms`, top: "35%", right: "8px" },
-    { name: "ENTROPY", val: entropyNorm.toFixed(2), bottom: "8px", right: "20px" },
-    { name: "SYMMETRY", val: symNorm.toFixed(2), bottom: "8px", left: "20px" },
-    { name: "VAE ERR", val: vaeNorm.toFixed(2), top: "35%", left: "8px" },
+    { name: "SYN RATE", val: `${(synNorm * 300).toFixed(0)}/s` },
+    { name: "IAT GAP", val: `${(iatNorm * 400).toFixed(0)}ms` },
+    { name: "ENTROPY", val: entropyNorm.toFixed(2) },
+    { name: "SYMMETRY", val: symNorm.toFixed(2) },
+    { name: "VAE ERR", val: vaeNorm.toFixed(2) },
   ];
 
   return (
-    <section className="panel radar-panel-wrap" style={{ padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden" }}>
-      {/* Animated Scanning Laser Line */}
-      <div className={`radar-laser-scan ${isAttacking ? "laser-alert" : "laser-nominal"}`} />
-
-      <div className="panel-heading" style={{ marginBottom: "4px", zIndex: 2 }}>
+    <section className="panel" style={{ padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+      <div className="panel-heading" style={{ marginBottom: "4px" }}>
         <div>
-          <span className="eyebrow">MULTI-VECTOR DIAGNOSTICS</span>
-          <h2 style={{ fontSize: "16px" }}>5D Telemetry Vector Radar</h2>
+          <span className="eyebrow">MULTI-VECTOR POLAR RADAR</span>
+          <h2 style={{ fontSize: "15px" }}>5D Telemetry Vector Radar</h2>
         </div>
         <span className={`live-chip ${isAttacking ? "packet-alert" : "packet-ok"}`}>
           <i /> {isAttacking ? "ANOMALOUS RADAR" : "NOMINAL POLAR"}
         </span>
       </div>
 
-      {/* Enlarged Radar Canvas */}
-      <div style={{ position: "relative", width: "100%", height: "270px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <svg viewBox="0 0 280 280" style={{ width: "270px", height: "270px" }}>
-          {/* Central Target Crosshair */}
-          <line x1={center - 15} y1={center} x2={center + 15} y2={center} stroke={isAttacking ? "var(--red)" : "var(--cyan)"} strokeWidth="1" opacity="0.6" />
-          <line x1={center} y1={center - 15} x2={center} y2={center + 15} stroke={isAttacking ? "var(--red)" : "var(--cyan)"} strokeWidth="1" opacity="0.6" />
-          <circle cx={center} cy={center} r="4" fill="none" stroke={isAttacking ? "var(--red)" : "var(--cyan)"} strokeWidth="1" />
+      <div style={{ position: "relative", width: "100%", height: "260px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <svg viewBox="0 0 280 280" style={{ width: "260px", height: "260px" }}>
+          <defs>
+            {/* 360 Degree Rotating Sweep Sector Gradient */}
+            <radialGradient id="radarSweepGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor={isAttacking ? "var(--red)" : "var(--cyan)"} stopOpacity="0.4" />
+              <stop offset="100%" stopColor={isAttacking ? "var(--red)" : "var(--cyan)"} stopOpacity="0.0" />
+            </radialGradient>
+          </defs>
 
-          {/* Radar Grid Circles / Concentric Pentagons */}
+          {/* Radar Grid Circles */}
           {[0.25, 0.5, 0.75, 1.0].map((step) => (
             <polygon
               key={step}
@@ -123,7 +128,7 @@ function RadarTelemetryChart({
                 .join(" ")}
               fill="none"
               stroke="var(--line)"
-              strokeWidth="0.9"
+              strokeWidth="0.8"
               strokeDasharray={step === 1.0 ? "none" : "3 3"}
             />
           ))}
@@ -137,17 +142,26 @@ function RadarTelemetryChart({
               x2={center + maxR * Math.cos(angle)}
               y2={center + maxR * Math.sin(angle)}
               stroke="var(--line)"
-              strokeWidth="1.2"
+              strokeWidth="1"
             />
           ))}
 
-          {/* Dynamic Telemetry Pentagon Polygon */}
+          {/* 360-Degree Rotating Radar Scanner Beam Sector */}
+          <g className="radar-sweep-group" style={{ transformOrigin: "140px 140px" }}>
+            <path
+              d="M 140 140 L 140 35 A 105 105 0 0 1 224 192 Z"
+              fill={isAttacking ? "color-mix(in srgb, var(--red) 35%, transparent)" : "color-mix(in srgb, var(--cyan) 25%, transparent)"}
+            />
+            <line x1="140" y1="140" x2="140" y2="35" stroke={isAttacking ? "var(--red)" : "var(--cyan)"} strokeWidth="1.5" />
+          </g>
+
+          {/* Dynamic Telemetry Polygon */}
           <polygon
             points={polygonPoints}
-            fill={isAttacking ? "color-mix(in srgb, var(--red) 30%, transparent)" : "color-mix(in srgb, var(--cyan) 25%, transparent)"}
+            fill={isAttacking ? "color-mix(in srgb, var(--red) 30%, transparent)" : "color-mix(in srgb, var(--cyan) 22%, transparent)"}
             stroke={isAttacking ? "var(--red)" : "var(--cyan)"}
             strokeWidth="2.5"
-            style={{ transition: "all 0.4s ease" }}
+            style={{ transition: "all 0.35s ease" }}
           />
 
           {/* Radar Vertices Dots */}
@@ -155,38 +169,38 @@ function RadarTelemetryChart({
             const r = Math.max(0.12, Math.min(1.0, values[i])) * maxR;
             const x = center + r * Math.cos(angle);
             const y = center + r * Math.sin(angle);
-            return <circle key={i} cx={x} cy={y} r="4.5" fill={isAttacking ? "var(--red)" : "var(--cyan)"} className="radar-vertex-dot" />;
+            return <circle key={i} cx={x} cy={y} r="4" fill={isAttacking ? "var(--red)" : "var(--cyan)"} />;
           })}
+
+          {/* Central Target Crosshair */}
+          <circle cx={center} cy={center} r="3" fill="var(--cyan)" />
+          <circle cx={center} cy={center} r="12" fill="none" stroke="var(--cyan)" strokeWidth="0.8" opacity="0.6" />
         </svg>
 
         {/* Axis Labels Overlay */}
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", fontSize: "9px", fontWeight: "800" }}>
-          {axisLabels.map((label, idx) => (
-            <span
-              key={idx}
-              style={{
-                position: "absolute",
-                top: label.top,
-                bottom: label.bottom,
-                left: label.left,
-                right: label.right,
-                transform: label.transform,
-                color: idx === 0 ? "var(--cyan)" : idx === 4 ? "var(--amber)" : "var(--ink)",
-                background: "color-mix(in srgb, var(--color-surface) 85%, transparent)",
-                padding: "2px 6px",
-                borderRadius: "3px",
-                border: "1px solid var(--line)",
-              }}
-            >
-              {label.name} <b style={{ color: isAttacking && (idx === 0 || idx === 4) ? "var(--red)" : "inherit" }}>({label.val})</b>
-            </span>
-          ))}
+          <span style={{ position: "absolute", top: "2px", left: "50%", transform: "translateX(-50%)", color: isAttacking ? "var(--red)" : "var(--cyan)" }}>
+            {axisLabels[0].name} ({axisLabels[0].val})
+          </span>
+          <span style={{ position: "absolute", top: "32%", right: "4px", color: "var(--ink)" }}>
+            {axisLabels[1].name} ({axisLabels[1].val})
+          </span>
+          <span style={{ position: "absolute", bottom: "8px", right: "24px", color: "var(--ink)" }}>
+            {axisLabels[2].name} ({axisLabels[2].val})
+          </span>
+          <span style={{ position: "absolute", bottom: "8px", left: "24px", color: "var(--ink)" }}>
+            {axisLabels[3].name} ({axisLabels[3].val})
+          </span>
+          <span style={{ position: "absolute", top: "32%", left: "4px", color: "var(--amber)" }}>
+            {axisLabels[4].name} ({axisLabels[4].val})
+          </span>
         </div>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px", color: "var(--muted)", borderTop: "1px solid var(--line)", paddingTop: "8px", marginTop: "4px", zIndex: 2 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px", color: "var(--muted)", borderTop: "1px solid var(--line)", paddingTop: "6px", marginTop: "2px" }}>
         <span>Topology: <b>5 Vector Space</b></span>
-        <span>Confidence: <b style={{ color: isAttacking ? "var(--red)" : "var(--green)" }}>{isAttacking ? "99.8%" : "99.4%"}</b></span>
+        <span>Sweep: <b>360° Continuous</b></span>
+        <span>Confidence: <b>{isAttacking ? "99.8%" : "99.4%"}</b></span>
       </div>
     </section>
   );
@@ -452,8 +466,8 @@ export function HardwareDeviceDashboard() {
           <DeviceStatus status={effectiveStatus} />
         </div>
 
-        {/* TOP ROW: Speedometer & Controls | Enlarged 5D Radar Chart | Live Packet Stream */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.25fr 1.2fr", gap: "16px", marginBottom: "20px", alignItems: "stretch" }}>
+        {/* TOP ROW: Speedometer & Controls | 5D Radar Chart | Live Packet Stream */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.2fr", gap: "16px", marginBottom: "20px", alignItems: "stretch" }}>
           {/* COLUMN 1: Speedometer Gauge & Controls */}
           <section className="meter-panel panel" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "18px" }}>
             <span className="eyebrow" style={{ width: "100%", textAlign: "left" }}>BEHAVIORAL TRUST GAUGE</span>
@@ -490,7 +504,7 @@ export function HardwareDeviceDashboard() {
             {action && <small style={{ color: "var(--cyan)", marginTop: "6px", textAlign: "center" }}>{action}</small>}
           </section>
 
-          {/* COLUMN 2: Enlarged 5D Radar Vector Chart */}
+          {/* COLUMN 2: 5D Radar Vector Chart */}
           <RadarTelemetryChart
             synNorm={synNorm}
             iatNorm={iatNorm}
@@ -504,14 +518,14 @@ export function HardwareDeviceDashboard() {
           <PacketStreamTable isAttacking={isAttacking} />
         </div>
 
-        {/* MIDDLE ROW: Vibrant Cybersec Formula Cards & MITRE ATT&CK Mapping */}
+        {/* MIDDLE ROW: Clean Mathematical Model Cards & MITRE ATT&CK Mapping */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "20px" }}>
-          {/* Card 1: VAE Reconstruction Error with Vibrant Cybersec Formula Styling */}
+          {/* Card 1: VAE Reconstruction Error */}
           <section className="panel" style={{ padding: "18px" }}>
             <span className="eyebrow">ANOMALY DETECTOR MODEL</span>
             <h2 style={{ margin: "4px 0 10px", fontSize: "15px" }}>VAE Reconstruction Error</h2>
-            <div className="formula-cyber-box cyber-cyan">
-              {"L_VAE = ||x - x_hat||^2 + D_KL(q(z|x) || p(z))"}
+            <div className="formula-cyber-box box-cyan">
+              <code>L_VAE = ||x - x_hat||^2 + D_KL(q(z|x) || p(z))</code>
             </div>
             <div className="hardware-data-list">
               <span>
@@ -523,12 +537,12 @@ export function HardwareDeviceDashboard() {
             </div>
           </section>
 
-          {/* Card 2: JSD Drift with Vibrant Cybersec Formula Styling */}
+          {/* Card 2: JSD Drift */}
           <section className="panel" style={{ padding: "18px" }}>
             <span className="eyebrow">STATISTICAL DRIFT DETECTOR</span>
             <h2 style={{ margin: "4px 0 10px", fontSize: "15px" }}>JSD Statistical Drift</h2>
-            <div className="formula-cyber-box cyber-amber">
-              {"D_JS(P || Q) = 0.5 * D_KL(P || M) + 0.5 * D_KL(Q || M)"}
+            <div className="formula-cyber-box box-amber">
+              <code>D_JS(P || Q) = 0.5 * D_KL(P || M) + 0.5 * D_KL(Q || M)</code>
             </div>
             <div className="hardware-data-list">
               <span>
@@ -569,5 +583,4 @@ export function HardwareDeviceDashboard() {
     </main>
   );
 }
-
 
