@@ -206,7 +206,7 @@ function RadarTelemetryChart({
   );
 }
 
-// 3. Security History Dual Waveform Charts (Green Trust Line & Red Anomaly Line)
+// 3. Security History Dual Waveform Charts (Green for Trust & Baseline, Red for Anomaly Ingestion)
 function SecurityDualWaveformChart({ points }: { points: Array<{ time: string; trust: number; anomaly: number; synRate: number }> }) {
   const width = 680;
   const height = 140;
@@ -216,7 +216,7 @@ function SecurityDualWaveformChart({ points }: { points: Array<{ time: string; t
     .join(" ");
 
   const anomalyPath = points
-    .map((p, i) => `${i ? "L" : "M"} ${(i / Math.max(points.length - 1, 1)) * width} ${height - Math.min(100, p.anomaly * 1.25)}`)
+    .map((p, i) => `${i ? "L" : "M"} ${(i / Math.max(points.length - 1, 1)) * width} ${height - Math.min(100, p.anomaly) * 1.25}`)
     .join(" ");
 
   const synPath = points
@@ -225,40 +225,37 @@ function SecurityDualWaveformChart({ points }: { points: Array<{ time: string; t
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-      {/* Waveform 1: Trust (Green) & Anomaly (Red) Waveform */}
+      {/* Waveform A: Trust Score (Green) & Anomaly Index (Red) */}
       <section className="history panel" style={{ marginTop: 0 }}>
         <div className="panel-heading">
           <div>
             <span className="eyebrow">TELEMETRY WAVEFORM A</span>
-            <h2 style={{ fontSize: "14px" }}>Trust &amp; Anomaly Index</h2>
+            <h2 style={{ fontSize: "14px" }}>Trust &amp; Baseline Health</h2>
           </div>
           <div className="chart-key" style={{ fontSize: "9px" }}>
-            <span className="trust-key" /> Nominal Trust <span className="anomaly-key" /> Cyber Anomaly
+            <span className="trust-key" style={{ background: "var(--green)" }} /> Trust Score (Nominal)
           </div>
         </div>
         <svg className="history-chart" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" style={{ height: "140px" }}>
           <path className="grid-line" d="M0 20H680M0 60H680M0 100H680" />
-          {/* Green Nominal Trust Line */}
-          <path className="trust-line" d={trustPath} />
-          {/* Red Anomaly Line */}
-          <path className="anomaly-line" d={anomalyPath} />
+          <path className="trust-line" stroke="var(--green)" d={trustPath} />
         </svg>
       </section>
 
-      {/* Waveform 2: SYN Packet Rate Waveform */}
+      {/* Waveform B: SYN Attack Rate Ingestion Frequency (Red Anomaly Line) */}
       <section className="history panel" style={{ marginTop: 0 }}>
         <div className="panel-heading">
           <div>
             <span className="eyebrow">TELEMETRY WAVEFORM B</span>
-            <h2 style={{ fontSize: "14px" }}>SYN Rate Ingestion Frequency</h2>
+            <h2 style={{ fontSize: "14px" }}>Anomaly &amp; Threat Ingestion Line</h2>
           </div>
           <div className="chart-key" style={{ fontSize: "9px" }}>
-            <span className="trust-key" style={{ background: "var(--amber)" }} /> Packet Rate (/s)
+            <span className="trust-key" style={{ background: "var(--red)" }} /> Anomaly / SYN Rate (Threat)
           </div>
         </div>
         <svg className="history-chart" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" style={{ height: "140px" }}>
           <path className="grid-line" d="M0 20H680M0 60H680M0 100H680" />
-          <path className="trust-line" stroke="var(--amber)" d={synPath} />
+          <path className="anomaly-line" stroke="var(--red)" d={synPath.length > 0 ? synPath : anomalyPath} />
         </svg>
       </section>
     </div>
