@@ -545,10 +545,70 @@ h2 { font: 600 19px Arial, Helvetica, sans-serif; margin-top: 8px; }
   transition: transform 0.4s ease;
 }
 
-.needle-line {
-  stroke: var(--ink);
-  stroke-width: 3.5;
-  stroke-linecap: round;
+/* Animated Radar Laser Scanner & Cybersec Formula Styling */
+.radar-panel-wrap {
+  position: relative;
+}
+
+.radar-laser-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan);
+  opacity: 0.7;
+  pointer-events: none;
+  animation: laser-sweep 3.5s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+.radar-laser-scan.laser-alert {
+  background: var(--red);
+  box-shadow: 0 0 14px var(--red), 0 0 28px var(--red);
+  animation-duration: 1.8s;
+}
+
+@keyframes laser-sweep {
+  0% { top: 10%; opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { top: 90%; opacity: 0.2; }
+}
+
+.radar-vertex-dot {
+  animation: vertex-pulse 1.8s infinite alternate;
+}
+
+@keyframes vertex-pulse {
+  from { r: 3.5px; opacity: 0.7; }
+  to { r: 5px; opacity: 1; }
+}
+
+/* Vibrant Monospace Cybersec Formula Box */
+.formula-cyber-box {
+  background: color-mix(in srgb, var(--color-surface-raised) 90%, transparent);
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-family: monospace;
+  margin-bottom: 14px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.formula-cyber-box.cyber-cyan {
+  color: var(--cyan);
+  border-color: color-mix(in srgb, var(--cyan) 40%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cyan) 15%, transparent);
+}
+
+.formula-cyber-box.cyber-amber {
+  color: var(--amber);
+  border-color: color-mix(in srgb, var(--amber) 40%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--amber) 15%, transparent);
 }
 
 .needle-cap {
