@@ -14,7 +14,9 @@ app/web/*.tsbuildinfo
 __pycache__/
 *.pyc
 data/aegis_incidents*.db
+data/forensic_recipient.json
 services/backend/api/data/*.db
+services/backend/api/data/forensic_recipient.json
 reports/incidents*/
 data/finals-capture/*.jsonl
 

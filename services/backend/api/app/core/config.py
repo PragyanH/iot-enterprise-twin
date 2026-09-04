@@ -2,16 +2,22 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parents[2]
-AUTH_DB_PATH = os.getenv("AEGIS_AUTH_DB_PATH", str(BASE_DIR / "data" / "aegis_auth.db"))
-AUTH_TOKEN_HOURS = int(os.getenv("AEGIS_AUTH_TOKEN_HOURS", "12"))
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
-
+load_dotenv(REPOSITORY_ROOT / ".env")
 
 def repository_path(environment_key: str, default: str) -> Path:
     configured = Path(os.getenv(environment_key, default))
     return configured if configured.is_absolute() else REPOSITORY_ROOT / configured
+
+
+AUTH_DB_PATH = repository_path(
+    "AEGIS_AUTH_DB_PATH",
+    "services/backend/api/data/aegis_auth.db",
+)
+AUTH_TOKEN_HOURS = int(os.getenv("AEGIS_AUTH_TOKEN_HOURS", "12"))
 
 
 MODEL_PACKAGE_PATH = repository_path(

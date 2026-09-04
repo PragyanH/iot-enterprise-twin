@@ -26,6 +26,7 @@ from app.core.config import (
     SMTP_TIMEOUT_SECONDS,
 )
 from pathlib import Path
+from threading import Thread
 
 from app.services.auth import AuthService
 from app.services.intelligence import IntelligenceService
@@ -60,7 +61,23 @@ notification_service = NotificationService(SMTPSettings(
     enabled=SMTP_ENABLED, host=SMTP_HOST, port=SMTP_PORT,
     username=SMTP_USERNAME, password=SMTP_PASSWORD, sender=SMTP_FROM,
     use_tls=SMTP_USE_TLS, timeout_seconds=SMTP_TIMEOUT_SECONDS,
-))
+), recipient_path=INCIDENT_DB_PATH.parent / "forensic_recipient.json")
+
+
+def _send_automatic_forensic_report(incident: dict[str, object]) -> None:
+    report = incident.get("report")
+    pdf_path = None
+    if isinstance(report, dict) and report.get("pdf_ready") and report.get("pdf_path"):
+        pdf_path = Path(str(report["pdf_path"]))
+
+    def deliver() -> None:
+        result = notification_service.send_forensic_report(incident, pdf_path)
+        trust_service.incidents.update_email(str(incident["incident_id"]), result)
+
+    Thread(target=deliver, name=f"aegis-report-{incident['incident_id']}", daemon=True).start()
+
+
+trust_service.incidents.set_automatic_report_sender(_send_automatic_forensic_report)
 workflow_service = IncidentWorkflowService(trust_service.incidents, auth_service, notification_service)
 intelligence_service = IntelligenceService(
     MODEL_PACKAGE_PATH,

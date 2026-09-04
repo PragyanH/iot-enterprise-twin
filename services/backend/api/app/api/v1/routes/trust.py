@@ -2,15 +2,37 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
 
 from app.api.v1.schemas.telemetry import TelemetryWindowPayload
 from app.core.runtime import trust_service
 
 
 router = APIRouter()
+
+
+class ForensicRecipientPayload(BaseModel):
+    email: str = Field(min_length=3, max_length=320)
+
+
+@router.get("/notifications/recipient", summary="Get the configured forensic report recipient")
+def notification_recipient() -> dict[str, object]:
+    from app.core.runtime import notification_service
+    return notification_service.recipient_status()
+
+
+@router.post("/notifications/recipient", summary="Set the forensic report recipient")
+def set_notification_recipient(payload: ForensicRecipientPayload) -> dict[str, object]:
+    email = payload.email.strip()
+    if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
+        raise HTTPException(status_code=422, detail="email must be a valid address")
+    from app.core.runtime import notification_service
+    notification_service.set_recipient(email)
+    return notification_service.recipient_status()
 
 
 @router.post("/telemetry/windows", summary="Ingest one normalized telemetry window")
