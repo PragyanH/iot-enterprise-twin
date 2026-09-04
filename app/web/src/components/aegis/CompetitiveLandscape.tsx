@@ -71,22 +71,41 @@ function EvidenceGraphic() {
   return (
     <div className="poc-evidence-graphic" aria-label="Four evidence channels converging into device trust">
       <div className="poc-graphic-channels">
-        <span>RULES</span>
-        <span>XGBOOST</span>
-        <span>LSTM-VAE</span>
-        <span>JSD DRIFT</span>
+        <div className="poc-channel-chip rules">
+          <span className="dot" />
+          <span>RULES</span>
+        </div>
+        <div className="poc-channel-chip xgboost">
+          <span className="dot" />
+          <span>XGBOOST</span>
+        </div>
+        <div className="poc-channel-chip lstm">
+          <span className="dot" />
+          <span>LSTM-VAE</span>
+        </div>
+        <div className="poc-channel-chip jsd">
+          <span className="dot" />
+          <span>JSD DRIFT</span>
+        </div>
       </div>
       <div className="poc-graphic-lines">
-        <i />
-        <i />
-        <i />
-        <i />
+        <i className="laser-pulse p1" />
+        <i className="laser-pulse p2" />
+        <i className="laser-pulse p3" />
+        <i className="laser-pulse p4" />
       </div>
       <div className="poc-graphic-core">
+        <div className="core-glow-ring" />
         <b>TRUST</b>
         <small>COMPOSER</small>
       </div>
-      <div className="poc-graphic-output">DEVICE STATE</div>
+      <div className="poc-graphic-output-wrapper">
+        <div className="output-laser-line" />
+        <div className="poc-graphic-output">
+          <span className="live-dot" />
+          DEVICE STATE
+        </div>
+      </div>
     </div>
   );
 }
@@ -99,62 +118,59 @@ function TrustGraphic() {
         <span>50</span>
         <span>0</span>
       </div>
-      <svg viewBox="0 0 420 150" role="img" aria-label="Trust trajectory from 98 to 23 to 97">
-        <defs>
-          <linearGradient id="trustGradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="var(--green)" />
-            <stop offset="35%" stopColor="var(--green)" />
-            <stop offset="50%" stopColor="var(--red)" />
-            <stop offset="68%" stopColor="var(--red)" />
-            <stop offset="85%" stopColor="var(--green)" />
-            <stop offset="100%" stopColor="var(--green)" />
-          </linearGradient>
-          <linearGradient id="trustAreaGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#00F5A0" stopOpacity="0.25" />
-            <stop offset="60%" stopColor="#FF0055" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="transparent" stopOpacity="0" />
-          </linearGradient>
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-        <path className="poc-chart-grid" d="M0 25H420M0 75H420M0 125H420" />
-        <path
-          d="M12 28 C70 29 96 32 135 56 S190 122 230 120 S300 106 345 72 S385 35 408 30 L408 145 L12 145 Z"
-          fill="url(#trustAreaGradient)"
-        />
-        <path
-          className="poc-trust-line"
-          d="M12 28 C70 29 96 32 135 56 S190 122 230 120 S300 106 345 72 S385 35 408 30"
-          stroke="url(#trustGradient)"
-          strokeWidth="3.5"
-          fill="none"
-          filter="url(#glow)"
-        />
-        <circle cx="12" cy="28" r="6" fill="#00F5A0" filter="url(#glow)" />
-        <circle cx="12" cy="28" r="2.5" fill="#FFFFFF" />
-        <circle cx="230" cy="120" r="6" fill="#FF0055" filter="url(#glow)" />
-        <circle cx="230" cy="120" r="2.5" fill="#FFFFFF" />
-        <circle cx="408" cy="30" r="6" fill="#00F5A0" filter="url(#glow)" />
-        <circle cx="408" cy="30" r="2.5" fill="#FFFFFF" />
-      </svg>
-      <div className="poc-chart-markers">
-        <span>
-          98
-          <br />
-          <small>HEALTHY</small>
-        </span>
-        <span style={{ color: "var(--red)" }}>
-          23
-          <br />
-          <small style={{ color: "var(--red)" }}>ATTACK</small>
-        </span>
-        <span>
-          97
-          <br />
-          <small>RESTORED</small>
-        </span>
+      <div className="poc-chart-svg-wrap">
+        <svg viewBox="0 0 420 150" role="img" aria-label="Trust trajectory from 98 to 23 to 97">
+          <defs>
+            <linearGradient id="trustFillGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--cyan)" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="var(--cyan)" stopOpacity="0.0" />
+            </linearGradient>
+            <linearGradient id="trustLineGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="var(--green)" />
+              <stop offset="25%" stopColor="var(--green)" />
+              <stop offset="45%" stopColor="var(--red)" />
+              <stop offset="65%" stopColor="var(--red)" />
+              <stop offset="85%" stopColor="var(--green)" />
+              <stop offset="100%" stopColor="var(--green)" />
+            </linearGradient>
+          </defs>
+          <path className="poc-chart-grid" d="M0 25H420M0 75H420M0 125H420" />
+          {/* Translucent fill under graph curve */}
+          <path
+            className="poc-chart-area"
+            fill="url(#trustFillGrad)"
+            d="M12 28 C70 29 96 32 135 56 S190 122 230 120 S300 106 345 72 S385 35 408 30 L408 145 L12 145 Z"
+          />
+          {/* Main Trajectory Line with Dual-Tone Green/Red/Green Gradient */}
+          <path
+            className="poc-trust-line"
+            stroke="url(#trustLineGrad)"
+            d="M12 28 C70 29 96 32 135 56 S190 122 230 120 S300 106 345 72 S385 35 408 30"
+          />
+          {/* Vertex Node Glow Rings and Circles */}
+          <circle cx="12" cy="28" r="8" fill="var(--green)" opacity="0.25" />
+          <circle cx="12" cy="28" r="4.5" fill="var(--green)" stroke="var(--color-surface)" strokeWidth="1.5" />
+
+          <circle cx="230" cy="120" r="9" fill="var(--red)" opacity="0.3" className="pulse-circle" />
+          <circle cx="230" cy="120" r="5" fill="var(--red)" stroke="var(--color-surface)" strokeWidth="1.5" />
+
+          <circle cx="408" cy="30" r="8" fill="var(--green)" opacity="0.25" />
+          <circle cx="408" cy="30" r="4.5" fill="var(--green)" stroke="var(--color-surface)" strokeWidth="1.5" />
+        </svg>
+        <div className="poc-chart-markers">
+          <span className="marker-healthy">
+            <b>98</b>
+            <small>HEALTHY</small>
+          </span>
+          <span className="marker-attack">
+            <b>23</b>
+            <small>ATTACK</small>
+          </span>
+          <span className="marker-restored">
+            <b>97</b>
+            <small>RESTORED</small>
+          </span>
+        </div>
       </div>
     </div>
   );
