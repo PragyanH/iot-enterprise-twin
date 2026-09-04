@@ -594,32 +594,79 @@ h2 { font: 600 19px Arial, Helvetica, sans-serif; margin-top: 8px; }
   }
 }
 
-/* Cybersec Formula Typography Box */
-.formula-cyber-box {
-  background: color-mix(in srgb, var(--color-surface-raised) 90%, black);
-  border: 1px solid var(--line);
+/* Enlarged Formulae Typography without Grey Box Container */
+.formula-enlarged {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: 12px;
+}
+
+.formula-cyan {
+  color: var(--cyan);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--cyan) 35%, transparent);
+}
+
+.formula-amber {
+  color: var(--amber);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--amber) 35%, transparent);
+}
+
+/* Multi-Stage Action Execution Sequence Ticker Box */
+.action-sequence-box {
+  width: 100%;
+  margin-top: 10px;
   padding: 10px 12px;
   border-radius: 6px;
-  margin-bottom: 12px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--line);
+  background: var(--color-surface-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: fadeIn 0.2s ease;
 }
 
-.formula-cyber-box code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 11.5px;
+.action-sequence-box.mode-attack {
+  border-color: var(--red);
+  background: color-mix(in srgb, var(--red) 8%, var(--color-surface));
+}
+
+.action-sequence-box.mode-remediate {
+  border-color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 8%, var(--color-surface));
+}
+
+.sequence-step-bar {
+  display: flex;
+  gap: 6px;
+}
+
+.step-dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  transition: background 0.3s ease;
+}
+
+.mode-attack .step-dot.active {
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red);
+}
+
+.mode-remediate .step-dot.active {
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+}
+
+.action-sequence-box span {
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  display: block;
-}
-
-.box-cyan code {
-  color: var(--cyan);
-  text-shadow: 0 0 8px color-mix(in srgb, var(--cyan) 40%, transparent);
-}
-
-.box-amber code {
-  color: var(--amber);
-  text-shadow: 0 0 8px color-mix(in srgb, var(--amber) 40%, transparent);
+  letter-spacing: 0.02em;
+  color: var(--ink);
 }
 
 .meter-note { width: 100%; border-top: 1px solid var(--line); padding-top: 15px; display: flex; justify-content: space-between; font-size: 10px; } .meter-note span { color: var(--muted); }

@@ -344,12 +344,13 @@ function PacketStreamTable({ isAttacking }: { isAttacking: boolean }) {
 
 export function HardwareDeviceDashboard() {
   const { devices, refresh, connected } = useDevices();
-  const [action, setAction] = useState<string | null>(null);
-
   const [overrideAttack, setOverrideAttack] = useState<boolean | null>(null);
   const [liveTrustScore, setLiveTrustScore] = useState<number>(98);
   const [liveVaeError, setLiveVaeError] = useState<number>(0.0161);
   const [liveJsdDrift, setLiveJsdDrift] = useState<number>(0.0271);
+
+  // Multi-stage action execution sequence state
+  const [executingStep, setExecutingStep] = useState<{ step: number; text: string; mode: "attack" | "remediate" } | null>(null);
 
   const device = devices.find((item) => item.id === "PI-001");
   const state = device?.backendState;
@@ -401,27 +402,59 @@ export function HardwareDeviceDashboard() {
     return () => clearInterval(timer);
   }, [liveTrustScore, isAttacking]);
 
+  // Multi-Stage Launch Attack Handler
   const handleLaunchAttack = async () => {
+    if (executingStep) return;
+
+    // Step 1: Initiating Scapy Packet Injection
+    setExecutingStep({ step: 1, text: "01 Initiating Scapy SYN Packet Injection at PI-001...", mode: "attack" });
+    await new Promise((r) => setTimeout(r, 800));
+
+    // Step 2: Overwhelming TCP Socket Buffer
+    setExecutingStep({ step: 2, text: "02 Overwhelming TCP Socket Buffer (240.0 pkts/sec)...", mode: "attack" });
+    await new Promise((r) => setTimeout(r, 800));
+
+    // Step 3: Triggering XGBoost & VAE Threshold
+    setExecutingStep({ step: 3, text: "03 Triggering XGBoost & LSTM-VAE Anomaly Threshold...", mode: "attack" });
+    await new Promise((r) => setTimeout(r, 800));
+
+    // Finish sequence and apply attack state
+    setExecutingStep(null);
     setOverrideAttack(true);
-    setAction("🚀 Attack launched (Instant UI response)");
 
     try {
       await apiJson("/api/v1/demo/replay/pi_syn?speed=4", { method: "POST" });
       await refresh();
     } catch {
-      // Keep local instant state
+      // Local state maintains response
     }
   };
 
+  // Multi-Stage Contain & Remediate Handler
   const handleRemediate = async () => {
+    if (executingStep) return;
+
+    // Step 1: Isolating Interface
+    setExecutingStep({ step: 1, text: "01 Isolating PI-001 Interface (iptables drop rule)...", mode: "remediate" });
+    await new Promise((r) => setTimeout(r, 800));
+
+    // Step 2: Purging Malicious SYN Backlog
+    setExecutingStep({ step: 2, text: "02 Purging Malicious SYN Backlog & Resetting Sockets...", mode: "remediate" });
+    await new Promise((r) => setTimeout(r, 800));
+
+    // Step 3: Re-verifying Baseline
+    setExecutingStep({ step: 3, text: "03 Re-verifying LSTM-VAE Baseline Distribution...", mode: "remediate" });
+    await new Promise((r) => setTimeout(r, 800));
+
+    // Finish sequence and restore healthy state
+    setExecutingStep(null);
     setOverrideAttack(false);
-    setAction("🛡️ Device remediated (Restored to HEALTHY)");
 
     try {
       await apiJson("/api/v1/devices/PI-001/remediate", { method: "POST" });
       await refresh();
     } catch {
-      // Keep local instant state
+      // Local state maintains response
     }
   };
 
@@ -483,11 +516,13 @@ export function HardwareDeviceDashboard() {
               <span>Source: {state?.source_mode ?? device.sourceMode}</span>
             </div>
 
+            {/* Action Buttons */}
             <div style={{ display: "flex", width: "100%", gap: "10px" }}>
               <button
                 type="button"
                 className="attack-button"
-                style={{ flex: 1, padding: "10px 6px", fontSize: "10px", fontWeight: "700" }}
+                disabled={executingStep !== null}
+                style={{ flex: 1, padding: "10px 6px", fontSize: "10px", fontWeight: "700", opacity: executingStep ? 0.6 : 1 }}
                 onClick={() => void handleLaunchAttack()}
               >
                 🚀 LAUNCH ATTACK
@@ -495,13 +530,25 @@ export function HardwareDeviceDashboard() {
               <button
                 type="button"
                 className="reset-button"
-                style={{ flex: 1, padding: "10px 6px", fontSize: "10px", fontWeight: "700", borderColor: "var(--cyan)", color: "var(--cyan)" }}
+                disabled={executingStep !== null}
+                style={{ flex: 1, padding: "10px 6px", fontSize: "10px", fontWeight: "700", borderColor: "var(--cyan)", color: "var(--cyan)", opacity: executingStep ? 0.6 : 1 }}
                 onClick={() => void handleRemediate()}
               >
                 🛡️ REMEDIATE
               </button>
             </div>
-            {action && <small style={{ color: "var(--cyan)", marginTop: "6px", textAlign: "center" }}>{action}</small>}
+
+            {/* Live Multi-Stage Step Execution Sequence Ticker Box */}
+            {executingStep && (
+              <div className={`action-sequence-box mode-${executingStep.mode}`}>
+                <div className="sequence-step-bar">
+                  <div className={`step-dot ${executingStep.step >= 1 ? "active" : ""}`} />
+                  <div className={`step-dot ${executingStep.step >= 2 ? "active" : ""}`} />
+                  <div className={`step-dot ${executingStep.step >= 3 ? "active" : ""}`} />
+                </div>
+                <span>{executingStep.text}</span>
+              </div>
+            )}
           </section>
 
           {/* COLUMN 2: 5D Radar Vector Chart */}
@@ -518,16 +565,19 @@ export function HardwareDeviceDashboard() {
           <PacketStreamTable isAttacking={isAttacking} />
         </div>
 
-        {/* MIDDLE ROW: Clean Mathematical Model Cards & MITRE ATT&CK Mapping */}
+        {/* MIDDLE ROW: Clean Mathematical Model Cards (NO GREY BOX, ENLARGED FORMULAE) */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "20px" }}>
           {/* Card 1: VAE Reconstruction Error */}
           <section className="panel" style={{ padding: "18px" }}>
             <span className="eyebrow">ANOMALY DETECTOR MODEL</span>
-            <h2 style={{ margin: "4px 0 10px", fontSize: "15px" }}>VAE Reconstruction Error</h2>
-            <div className="formula-cyber-box box-cyan">
-              <code>L_VAE = ||x - x_hat||^2 + D_KL(q(z|x) || p(z))</code>
+            <h2 style={{ margin: "4px 0 12px", fontSize: "15px" }}>VAE Reconstruction Error</h2>
+            
+            {/* Enlarged Formula without grey background */}
+            <div className="formula-enlarged formula-cyan">
+              L_VAE = ||x - x_hat||^2 + D_KL(q(z|x) || p(z))
             </div>
-            <div className="hardware-data-list">
+
+            <div className="hardware-data-list" style={{ marginTop: "14px" }}>
               <span>
                 Live Reconstruction Error: <b style={{ fontSize: "15px", color: liveVaeError > 5.0 ? "var(--red)" : "var(--green)" }}>{liveVaeError.toFixed(4)}</b>
               </span>
@@ -540,11 +590,14 @@ export function HardwareDeviceDashboard() {
           {/* Card 2: JSD Drift */}
           <section className="panel" style={{ padding: "18px" }}>
             <span className="eyebrow">STATISTICAL DRIFT DETECTOR</span>
-            <h2 style={{ margin: "4px 0 10px", fontSize: "15px" }}>JSD Statistical Drift</h2>
-            <div className="formula-cyber-box box-amber">
-              <code>D_JS(P || Q) = 0.5 * D_KL(P || M) + 0.5 * D_KL(Q || M)</code>
+            <h2 style={{ margin: "4px 0 12px", fontSize: "15px" }}>JSD Statistical Drift</h2>
+            
+            {/* Enlarged Formula without grey background */}
+            <div className="formula-enlarged formula-amber">
+              D_JS(P || Q) = 0.5 * D_KL(P || M) + 0.5 * D_KL(Q || M)
             </div>
-            <div className="hardware-data-list">
+
+            <div className="hardware-data-list" style={{ marginTop: "14px" }}>
               <span>
                 Live Drift Score: <b style={{ fontSize: "15px", color: liveJsdDrift > 0.08 ? "var(--red)" : "var(--green)" }}>{liveJsdDrift.toFixed(4)}</b>
               </span>
